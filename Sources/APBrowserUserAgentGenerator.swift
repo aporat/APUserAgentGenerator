@@ -1,16 +1,15 @@
 import Foundation
 import UIKit
 
-public enum BrowserType {
+public enum BrowserType: CaseIterable {
     case safari
     case chrome
     case firefox
     case edge
     case opera
-    
 }
 
-public enum PlatformType {
+public enum PlatformType: CaseIterable {
     case iOS
     case macOS
     case android
@@ -26,7 +25,6 @@ public final class APBrowserUserAgentGenerator {
     public var osVersion: String?
     public var deviceModel: String?
 
-    // These parts of the UA are frozen in WebKit-based browsers.
     private let kernelVersion = "15E148"
     private let safariBuildNumber = "604.1"
     private let webkitVersion = "605.1.15"
@@ -47,6 +45,38 @@ public final class APBrowserUserAgentGenerator {
         self.deviceModel = getDeviceModel()
     }
 
+    public static func random() -> String {
+        let browser = BrowserType.allCases.randomElement()!
+        let platform = PlatformType.allCases.randomElement()!
+
+        let generator = APBrowserUserAgentGenerator(browser: browser, platform: platform)
+
+        switch browser {
+        case .chrome, .edge, .opera:
+            generator.browserVersion = "\(Int.random(in: 100...140)).0.0.0"
+        case .firefox:
+            generator.browserVersion = "\(Int.random(in: 120...140)).0"
+        case .safari:
+            generator.browserVersion = "\(Int.random(in: 15...18)).\(Int.random(in: 0...6))"
+        }
+
+        switch platform {
+        case .iOS:
+            generator.osVersion = "\(Int.random(in: 16...18)).\(Int.random(in: 0...6))"
+        case .macOS:
+            generator.osVersion = "\(Int.random(in: 10...14)).\(Int.random(in: 0...6))"
+        case .android:
+            generator.osVersion = "\(Int.random(in: 10...14))"
+            generator.deviceModel = ["Pixel 2", "Pixel 5", "Pixel 7"].randomElement()!
+        case .windows:
+            generator.osVersion = "10.0"
+        case .linux:
+            generator.osVersion = "6.0"
+        }
+
+        return generator.generate()
+    }
+
     public func generate() -> String {
         let osVer = osVersion ?? defaultOSVersion()
         let browserVer = browserVersion ?? defaultBrowserVersion()
@@ -54,14 +84,14 @@ public final class APBrowserUserAgentGenerator {
 
         switch (platform, browser) {
         case (.iOS, .safari):
-            // Apple uses 605.1.15 for AppleWebKit and 604.1 for Safari version on iOS
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Mobile/\(kernelVersion) Safari/\(safariBuildNumber)"
 
         case (.iOS, .firefox):
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) FxiOS/\(browserVer) Mobile/\(kernelVersion) Safari/\(webkitVersion)"
-        
+
         case (.iOS, .opera):
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(osVer) Mobile/\(kernelVersion) Safari/\(safariBuildNumber) OPT/\(browserVer)"
+
         case (.macOS, .safari):
             return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Safari/\(webkitVersion)"
 
@@ -104,7 +134,6 @@ public final class APBrowserUserAgentGenerator {
         case .firefox: return "137.0"
         case .edge: return "123.0.0.0"
         case .opera: return "108.0.0.0"
-        
         }
     }
 
