@@ -27,13 +27,12 @@ jobs:
           fetch-depth: 1
 
       - name: Set project name from repo slug
-        run: echo "workspace=$(basename ${{ github.repository }})" >> $GITHUB_ENV
+        run: echo "scheme=$(basename ${{ github.repository }})" >> $GITHUB_ENV
 
       - name: Run test on ${{ matrix.platform }} (iOS ${{ matrix.os }})
         run: |
           xcodebuild test \
-             -workspace ${{ env.workspace }}.xcworkspace \
-             -scheme ${{ env.workspace }} \
+             -scheme ${{ env.scheme }} \
              -destination 'platform=iOS Simulator,name=${{ matrix.platform }},OS=${{ matrix.os }}' \
             -enableCodeCoverage YES \
             -derivedDataPath ./DerivedData \
@@ -51,11 +50,11 @@ jobs:
       - name: Generate Coverage Report
         run: |
           slather coverage \
-            --scheme ${{ env.workspace }} \
+            --scheme ${{ env.scheme }} \
             --output-directory ./coverage \
             --cobertura-xml \
             --build-directory ./DerivedData \
-            ./${{ env.workspace }}.xcodeproj
+            ./${{ env.scheme }}.xcodeproj
 
       # Convert .xcresult to JUnit XML for test results
       - name: Convert Test Results to JUnit
