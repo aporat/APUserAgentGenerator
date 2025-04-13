@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "APUserAgentGenerator",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v16),
         .macOS(.v10_15)
     ],
     products: [
@@ -21,7 +21,8 @@ let package = Package(
             name: "APUserAgentGenerator",
             dependencies: [
                 "DeviceKit"
-            ]
+            ],
+            path: "Sources"
         ),
         .testTarget(
             name: "APUserAgentGeneratorTests",
