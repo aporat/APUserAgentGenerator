@@ -1,6 +1,6 @@
 # APUserAgentGenerator
 
-**APUserAgentGenerator** is a Swift library designed to generate realistic and customizable User-Agent strings for various platforms and browsers. It supports mobile and desktop environments, allowing developers to simulate different client configurations for testing, analytics, or other purposes.
+**APUserAgentGenerator** is a Swift library designed to generate realistic and customizable User-Agent strings for both browsers and app contexts. It supports mobile and desktop environments, allowing developers to simulate different client configurations for testing, analytics, or other purposes.
 
 [![Swift](https://img.shields.io/badge/Swift-5.9_5.10_6.0-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.9_5.10_6.0-Orange?style=flat-square)
 [![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS_-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_vision_OS?style=flat-square)
@@ -10,11 +10,11 @@
 
 ## Features
 
-- **Platform Support**: Generate User-Agent strings for iOS, macOS, Android, and Windows.
-- **Browser Support**: Customize User-Agent strings for Safari, Chrome, and Firefox.
-- **Dynamic Versioning**: Automatically detects and incorporates system and browser versions.
-- **Device Modeling**: Simulate different device models for more accurate User-Agent strings.
-- **Extensible Architecture**: Easily extend support for additional platforms or browsers.
+- **Platform Support**: Generate User-Agent strings for iOS, macOS, Android, Windows, and Linux.
+- **Browser Support**: Supports Safari, Chrome, Firefox, Edge, and Opera.
+- **App Context Support**: Easily generate User-Agent strings for apps using bundle and device info.
+- **Dynamic Versioning**: Auto-detects or lets you override system and browser versions.
+- **Modular Builder Pattern**: Clean, chainable API for flexibility and clarity.
 
 ## Installation
 
@@ -32,69 +32,77 @@ Then, include `"APUserAgentGenerator"` as a dependency for your target.
 
 ## Usage
 
-### Importing the Library
+### Random User-Agent
 
+You can also generate a random realistic User-Agent with:
+
+```swift
+let randomUA = APUserAgentBuilder.random()
+print(randomUA)
+// Example: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
+```
+
+### Import the Module
 ```swift
 import APUserAgentGenerator
 ```
 
-### Generating a User-Agent String
+---
 
-Create an instance of `APBrowserUserAgentGenerator` and configure it as needed:
+## APBrowserUserAgentGenerator (Browser User-Agent)
 
+### Example:
 ```swift
-let generator = APBrowserUserAgentGenerator(browser: .safari, platform: .iOS)
-generator.browserVersion = "17.0"
-generator.osVersion = "17.4"
-generator.deviceModel = "iPhone14,2"
+let userAgent = APUserAgentBuilder
+    .builder()
+    .withDevice(IPhoneDevice())
+    .withBrowser(SafariBrowser(version: "18.4"))
+    .generate()
 
-let userAgent = generator.generate()
 print(userAgent)
-// Output: Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1
+// Output: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1
 ```
 
 ### Supported Browsers
-
 - `.safari`
 - `.chrome`
 - `.firefox`
+- `.edge`
+- `.opera`
 
 ### Supported Platforms
-
 - `.iOS`
 - `.macOS`
 - `.android`
 - `.windows`
+- `.linux`
 
-## Customization
+---
 
-You can customize the generated User-Agent string by setting the following properties:
-
-- `browserVersion`: Specifies the browser version.
-- `osVersion`: Specifies the operating system version.
-- `deviceModel`: Specifies the device model.
-
-If these properties are not set, the generator will attempt to use default values based on the current system.
-
-## APUserAgentGenerator (App Context User-Agent)
-
-If you need to generate a User-Agent for your app context (not a browser), use `APUserAgentGenerator`. This class builds a user-agent string based on your app name, version, platform, architecture, and additional custom parts.
+## APAppUserAgentBuilder (App Context User-Agent)
 
 ### Example:
-
 ```swift
-let uaGen = APUserAgentGenerator()
-uaGen.addPart("SDK/3.2")
-uaGen.addPart("Build/567")
-let userAgent = uaGen.generate()
+let userAgent = APAppUserAgentBuilder
+    .builder()
+    .withAppName("MyApp")
+    .withAppVersion("1.0")
+    .withPlatform("iOS")
+    .withPlatformArchitecture("arm64")
+    .withPlatformVersion("18.4")
+    .addPart("SDK/3.2")
+    .addPart("Build/567")
+    .generate()
 
-// Output example: "MyApp 1.0 (iOS; arm64; 17.4; SDK/3.2; Build/567)"
+print(userAgent)
+// Output: MyApp 1.0 (iOS; arm64; 18.4; SDK/3.2; Build/567)
 ```
 
-### Auto-Detection:
+### Auto-detection
+- App name and version pulled from `Bundle.main`
+- Device architecture and OS version pulled from `DeviceKit`
 
-- App name and version are pulled from `Bundle.main`.
-- Platform and architecture are pulled from `DeviceKit`.
+---
 
 ## Contributing
 
