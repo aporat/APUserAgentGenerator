@@ -7,6 +7,7 @@ public enum BrowserType {
     case firefox
     case edge
     case opera
+    
 }
 
 public enum PlatformType {
@@ -14,6 +15,7 @@ public enum PlatformType {
     case macOS
     case android
     case windows
+    case linux
 }
 
 public final class APBrowserUserAgentGenerator {
@@ -54,6 +56,9 @@ public final class APBrowserUserAgentGenerator {
         case (.iOS, .safari):
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Mobile/\(kernelVersion) Safari/\(safariBuildNumber)"
 
+        case (.iOS, .firefox):
+            return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) FxiOS/\(browserVer) Mobile/\(kernelVersion) Safari/\(webkitVersion)"
+
         case (.macOS, .safari):
             return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Safari/\(webkitVersion)"
 
@@ -75,6 +80,15 @@ public final class APBrowserUserAgentGenerator {
         case (.android, .opera):
             return "Mozilla/5.0 (Linux; Android \(osVer); \(model)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Mobile Safari/537.36 OPR/\(browserVer)"
 
+        case (.linux, .chrome):
+            return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Safari/537.36"
+
+        case (.linux, .firefox):
+            return "Mozilla/5.0 (X11; Linux x86_64; rv:\(browserVer)) Gecko/20100101 Firefox/\(browserVer)"
+
+        case (.linux, .edge):
+            return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Safari/537.36 Edg/\(browserVer)"
+
         default:
             return "Mozilla/5.0 (Unknown Platform)"
         }
@@ -87,6 +101,7 @@ public final class APBrowserUserAgentGenerator {
         case .firefox: return "137.0"
         case .edge: return "123.0.0.0"
         case .opera: return "108.0.0.0"
+        
         }
     }
 
@@ -113,6 +128,8 @@ public final class APBrowserUserAgentGenerator {
             return "14"
         case .windows:
             return "10.0"
+        case .linux:
+            return "6.0"
         }
     }
 
