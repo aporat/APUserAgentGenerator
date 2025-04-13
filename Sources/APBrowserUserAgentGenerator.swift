@@ -4,6 +4,7 @@ import UIKit
 public enum BrowserType {
     case safari
     case chrome
+    case firefox
 }
 
 public enum PlatformType {
@@ -47,6 +48,8 @@ public final class APBrowserUserAgentGenerator {
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(browserVer) Mobile/15E148 Safari/604.1"
         case (.macOS, .safari):
             return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(browserVer) Safari/605.1.15"
+        case (.macOS, .firefox):
+            return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer); rv:\(browserVer)) Gecko/20100101 Firefox/\(browserVer)"
         case (.android, .chrome):
             return "Mozilla/5.0 (Linux; Android \(osVer); \(model)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Mobile Safari/537.36"
         case (.windows, .chrome):
@@ -75,8 +78,9 @@ public final class APBrowserUserAgentGenerator {
 
     private func defaultBrowserVersion() -> String {
         switch browser {
-            case .safari: return safariVersion
-            case .chrome: return "123.0.0.0"
+        case .safari: return safariVersion
+        case .chrome: return "123.0.0.0"
+        case .firefox: return "137.0"
         }
     }
 

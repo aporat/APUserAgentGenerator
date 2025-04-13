@@ -72,5 +72,14 @@ final class APBrowserUserAgentGeneratorTests: XCTestCase {
         XCTAssertEqual(result, expectedUA)
     }
     
-    
+    func testGenerateFirefoxOnMacOSUserAgent() {
+        let generator = APBrowserUserAgentGenerator(browser: .firefox, platform: .macOS)
+        generator.browserVersion = "137.0"
+        generator.osVersion = "10.15"
+
+        let expectedUA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:137.0) Gecko/20100101 Firefox/137.0"
+        let result = generator.generate()
+
+        XCTAssertEqual(result, expectedUA)
+    }
 }
