@@ -54,11 +54,14 @@ public final class APBrowserUserAgentGenerator {
 
         switch (platform, browser) {
         case (.iOS, .safari):
+            // Apple uses 605.1.15 for AppleWebKit and 604.1 for Safari version on iOS
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Mobile/\(kernelVersion) Safari/\(safariBuildNumber)"
 
         case (.iOS, .firefox):
             return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) FxiOS/\(browserVer) Mobile/\(kernelVersion) Safari/\(webkitVersion)"
-
+        
+        case (.iOS, .opera):
+            return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(osVer) Mobile/\(kernelVersion) Safari/\(safariBuildNumber) OPT/\(browserVer)"
         case (.macOS, .safari):
             return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Safari/\(webkitVersion)"
 

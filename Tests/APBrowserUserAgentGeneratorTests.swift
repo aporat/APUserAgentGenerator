@@ -116,4 +116,15 @@ final class APBrowserUserAgentGeneratorTests: XCTestCase {
         
         XCTAssertEqual(result, expectedUA)
     }
+    
+    func testGenerateOperaOniOSUserAgent() {
+           let generator = APBrowserUserAgentGenerator(browser: .opera, platform: .iOS)
+           generator.browserVersion = "5.5.0"
+           generator.osVersion = "18.4"
+
+           let expectedUA = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1 OPT/5.5.0"
+           let result = generator.generate()
+
+           XCTAssertEqual(result, expectedUA)
+       }
 }
