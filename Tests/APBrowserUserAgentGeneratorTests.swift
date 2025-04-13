@@ -82,4 +82,27 @@ final class APBrowserUserAgentGeneratorTests: XCTestCase {
 
         XCTAssertEqual(result, expectedUA)
     }
+    
+    func testGenerateEdgeOnWindowsUserAgent() {
+            let generator = APBrowserUserAgentGenerator(browser: .edge, platform: .windows)
+            generator.browserVersion = "123.0.2420.65"
+            generator.osVersion = "10.0"
+
+            let expectedUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.2420.65 Safari/537.36 Edg/123.0.2420.65"
+            let result = generator.generate()
+
+            XCTAssertEqual(result, expectedUA)
+        }
+
+        func testGenerateOperaOnAndroidUserAgent() {
+            let generator = APBrowserUserAgentGenerator(browser: .opera, platform: .android)
+            generator.browserVersion = "108.0.0.0"
+            generator.osVersion = "13"
+            generator.deviceModel = "Pixel 5"
+
+            let expectedUA = "Mozilla/5.0 (Linux; Android 13; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Mobile Safari/537.36 OPR/108.0.0.0"
+            let result = generator.generate()
+
+            XCTAssertEqual(result, expectedUA)
+        }
 }

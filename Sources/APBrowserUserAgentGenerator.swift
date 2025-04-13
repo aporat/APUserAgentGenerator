@@ -5,6 +5,8 @@ public enum BrowserType {
     case safari
     case chrome
     case firefox
+    case edge
+    case opera
 }
 
 public enum PlatformType {
@@ -21,6 +23,11 @@ public final class APBrowserUserAgentGenerator {
     public var browserVersion: String?
     public var osVersion: String?
     public var deviceModel: String?
+
+    // These parts of the UA are frozen in WebKit-based browsers.
+    private let kernelVersion = "15E148"
+    private let safariBuildNumber = "604.1"
+    private let webkitVersion = "605.1.15"
 
     public init(browser: BrowserType? = nil, platform: PlatformType? = nil) {
         #if os(iOS)
@@ -45,19 +52,41 @@ public final class APBrowserUserAgentGenerator {
 
         switch (platform, browser) {
         case (.iOS, .safari):
-            return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(browserVer) Mobile/15E148 Safari/604.1"
+            return "Mozilla/5.0 (iPhone; CPU iPhone OS \(osVer.replacingOccurrences(of: ".", with: "_")) like Mac OS X) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Mobile/\(kernelVersion) Safari/\(safariBuildNumber)"
+
         case (.macOS, .safari):
-            return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(browserVer) Safari/605.1.15"
-        case (.macOS, .firefox):
-            return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer); rv:\(browserVer)) Gecko/20100101 Firefox/\(browserVer)"
+            return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/\(webkitVersion) (KHTML, like Gecko) Version/\(browserVer) Safari/\(webkitVersion)"
+
         case (.android, .chrome):
             return "Mozilla/5.0 (Linux; Android \(osVer); \(model)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Mobile Safari/537.36"
+
         case (.windows, .chrome):
             return "Mozilla/5.0 (Windows NT \(osVer); Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Safari/537.36"
+
         case (.macOS, .chrome):
             return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer.replacingOccurrences(of: ".", with: "_"))) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Safari/537.36"
+
+        case (.macOS, .firefox):
+            return "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVer); rv:\(browserVer)) Gecko/20100101 Firefox/\(browserVer)"
+
+        case (.windows, .edge):
+            return "Mozilla/5.0 (Windows NT \(osVer); Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Safari/537.36 Edg/\(browserVer)"
+
+        case (.android, .opera):
+            return "Mozilla/5.0 (Linux; Android \(osVer); \(model)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(browserVer) Mobile Safari/537.36 OPR/\(browserVer)"
+
         default:
             return "Mozilla/5.0 (Unknown Platform)"
+        }
+    }
+
+    private func defaultBrowserVersion() -> String {
+        switch browser {
+        case .safari: return safariVersion
+        case .chrome: return "123.0.0.0"
+        case .firefox: return "137.0"
+        case .edge: return "123.0.0.0"
+        case .opera: return "108.0.0.0"
         }
     }
 
@@ -76,20 +105,10 @@ public final class APBrowserUserAgentGenerator {
         #endif
     }
 
-    private func defaultBrowserVersion() -> String {
-        switch browser {
-        case .safari: return safariVersion
-        case .chrome: return "123.0.0.0"
-        case .firefox: return "137.0"
-        }
-    }
-
     private func defaultOSVersion() -> String {
         switch platform {
-        case .iOS:
-            return "17.4"
-        case .macOS:
-            return "14.4"
+        case .iOS, .macOS:
+            return getSystemVersion()
         case .android:
             return "14"
         case .windows:
@@ -105,10 +124,9 @@ public final class APBrowserUserAgentGenerator {
             return ""
         }
     }
-    
+
     private var safariVersion: String {
         let os = ProcessInfo().operatingSystemVersion
-
         switch os.majorVersion {
         case 12: return "12.1.2"
         case 13: return "13.1.2"
@@ -116,10 +134,8 @@ public final class APBrowserUserAgentGenerator {
         case 15: return "15.6"
         case 16: return "16.6"
         case 17: return "17.4"
-        case 18:
-            return "\(os.majorVersion).\(os.minorVersion)"
-        default:
-            return "\(os.majorVersion).0"
+        case 18: return "\(os.majorVersion).\(os.minorVersion)"
+        default: return "\(os.majorVersion).0"
         }
     }
 }

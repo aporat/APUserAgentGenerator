@@ -76,6 +76,26 @@ You can customize the generated User-Agent string by setting the following prope
 
 If these properties are not set, the generator will attempt to use default values based on the current system.
 
+## APUserAgentGenerator (App Context User-Agent)
+
+If you need to generate a User-Agent for your app context (not a browser), use `APUserAgentGenerator`. This class builds a user-agent string based on your app name, version, platform, architecture, and additional custom parts.
+
+### Example:
+
+```swift
+let uaGen = APUserAgentGenerator()
+uaGen.addPart("SDK/3.2")
+uaGen.addPart("Build/567")
+let userAgent = uaGen.generate()
+
+// Output example: "MyApp 1.0 (iOS; arm64; 17.4; SDK/3.2; Build/567)"
+```
+
+### Auto-Detection:
+
+- App name and version are pulled from `Bundle.main`.
+- Platform and architecture are pulled from `DeviceKit`.
+
 ## Contributing
 
 Contributions are welcome! To contribute:
