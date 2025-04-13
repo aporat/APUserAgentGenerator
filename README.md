@@ -32,6 +32,21 @@ Then, include `"APUserAgentGenerator"` as a dependency for your target.
 
 ## Usage
 
+### Custom User-Agent
+
+You can construct fully custom User-Agent strings by composing the browser and device parts yourself using the modular builder pattern:
+
+```swift
+let device = AndroidDevice(osVersion: "13", deviceModel: "Pixel 5")
+let browser = ChromeBrowser(version: "123.0.6312.86")
+
+let customUA = APUserAgentBuilder(device: device, browser: browser).generate()
+print(customUA)
+// Output: Mozilla/5.0 (Linux; Android 13; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.86 Mobile Safari/537.36
+```
+
+This is useful if you want to use dependency injection or construct agents manually for testing.
+
 ### Random User-Agent
 
 You can also generate a random realistic User-Agent with:
@@ -49,12 +64,14 @@ import APUserAgentGenerator
 
 ---
 
-## APUserAgentBuilder (Browser User-Agent)
+## APBrowserUserAgentGenerator (Browser User-Agent)
 
 ### Example:
 ```swift
 let userAgent = APUserAgentBuilder
     .builder()
+    .withDevice(IPhoneDevice())
+    .withBrowser(SafariBrowser(version: "18.4"))
     .generate()
 
 print(userAgent)
