@@ -173,7 +173,7 @@ public struct OperaBrowser: UABrowser {
 
 // MARK: - UA Generator
 
-public class APUserAgentBuilder {
+public class APWebBrowserAgentBuilder {
     public var device: UADevice
     public var browser: UABrowser
 
@@ -242,8 +242,8 @@ public class APUserAgentBuilder {
             return self
         }
 
-        public func build() -> APUserAgentBuilder {
-            return APUserAgentBuilder(device: device, browser: browser)
+        public func build() -> APWebBrowserAgentBuilder {
+            return APWebBrowserAgentBuilder(device: device, browser: browser)
         }
 
         public func generate() -> String {

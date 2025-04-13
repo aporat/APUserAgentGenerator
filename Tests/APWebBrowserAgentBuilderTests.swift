@@ -1,10 +1,10 @@
 import XCTest
 @testable import APUserAgentGenerator
 
-final class APUserAgentBuilderTests: XCTestCase {
+final class APWebBrowserAgentBuilderTests: XCTestCase {
 
     func testDefault() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .generate()
 
@@ -13,7 +13,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
     
     func testSafariOniOS() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(IPhoneDevice())
             .withBrowser(SafariBrowser(version: "18.4"))
@@ -24,7 +24,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testFirefoxOniOS() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(IPhoneDevice())
             .withBrowser(FirefoxBrowser(version: "137.1"))
@@ -35,7 +35,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testChromeOnAndroid() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(AndroidDevice(deviceModel: "Pixel 7"))
             .withBrowser(ChromeBrowser(version: "123.0.6312.86"))
@@ -46,7 +46,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testChromeOnWindows() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(WindowsDevice())
             .withBrowser(ChromeBrowser(version: "123.0.6312.86"))
@@ -57,7 +57,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testFirefoxOnMac() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(MacDevice())
             .withBrowser(FirefoxBrowser(version: "137.0"))
@@ -68,7 +68,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testOperaOniOS() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(IPhoneDevice())
             .withBrowser(OperaBrowser(version: "5.5.0"))
@@ -79,7 +79,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testDefaultiOSUserAgent() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(IPhoneDevice())
             .withBrowser(SafariBrowser(version: "18.4"))
@@ -90,7 +90,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testNoVersionSetDefaults() {
-        let ua = APUserAgentBuilder
+        let ua = APWebBrowserAgentBuilder
             .builder()
             .withDevice(IPhoneDevice())
             .withBrowser(SafariBrowser())
@@ -101,7 +101,7 @@ final class APUserAgentBuilderTests: XCTestCase {
     }
 
     func testRandomUserAgentFormat() {
-        let ua = APUserAgentBuilder.random()
+        let ua = APWebBrowserAgentBuilder.random()
         XCTAssertTrue(ua.starts(with: "Mozilla/5.0"), "Random UA should start with Mozilla/5.0")
         XCTAssertTrue(ua.contains("Safari") || ua.contains("Firefox") || ua.contains("Chrome"), "Random UA should contain a known browser")
     }
