@@ -3,6 +3,15 @@ import XCTest
 
 final class APUserAgentBuilderTests: XCTestCase {
 
+    func testDefault() {
+        let ua = APUserAgentBuilder
+            .builder()
+            .generate()
+
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1"
+        XCTAssertEqual(ua, expected)
+    }
+    
     func testSafariOniOS() {
         let ua = APUserAgentBuilder
             .builder()

@@ -49,14 +49,12 @@ import APUserAgentGenerator
 
 ---
 
-## APBrowserUserAgentGenerator (Browser User-Agent)
+## APUserAgentBuilder (Browser User-Agent)
 
 ### Example:
 ```swift
 let userAgent = APUserAgentBuilder
     .builder()
-    .withDevice(IPhoneDevice())
-    .withBrowser(SafariBrowser(version: "18.4"))
     .generate()
 
 print(userAgent)
