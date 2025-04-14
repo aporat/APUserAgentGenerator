@@ -1,6 +1,5 @@
 import Foundation
 import DeviceKit
-import UIKit
 
 public final class APAppUserAgentBuilder {
     private var appName: String

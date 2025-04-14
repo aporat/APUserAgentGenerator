@@ -26,7 +26,8 @@ let package = Package(
         ),
         .testTarget(
             name: "APUserAgentGeneratorTests",
-            dependencies: ["APUserAgentGenerator"]
+            dependencies: ["APUserAgentGenerator"],
+            path: "Tests"
         ),
     ]
 )
