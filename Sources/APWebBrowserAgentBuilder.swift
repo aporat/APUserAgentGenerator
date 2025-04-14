@@ -1,3 +1,5 @@
+import Foundation
+
 // MARK: - Protocols
 
 public protocol UADevice {
@@ -27,7 +29,11 @@ public enum PlatformType: CaseIterable {
 public struct MacDevice: UADevice {
     public var osVersion: String? = nil
     public var deviceModel: String = "Macintosh"
-
+    
+    public init(osVersion: String? = nil) {
+        self.osVersion = osVersion
+    }
+    
     public func userAgentSystemInfo(for browser: BrowserType) -> String {
         let version = osVersion ?? "14.4"
         switch browser {
@@ -43,7 +49,11 @@ public struct MacDevice: UADevice {
 public struct IPhoneDevice: UADevice {
     public var osVersion: String? = nil
     public var deviceModel: String = "iPhone"
-
+    
+    public init(osVersion: String? = nil) {
+        self.osVersion = osVersion
+    }
+    
     public func userAgentSystemInfo(for browser: BrowserType) -> String {
         let version = osVersion ?? "18.4"
         let underscored = version.replacingOccurrences(of: ".", with: "_")
@@ -54,7 +64,12 @@ public struct IPhoneDevice: UADevice {
 public struct AndroidDevice: UADevice {
     public var osVersion: String? = nil
     public var deviceModel: String
-
+    
+    public init(osVersion: String? = nil, deviceModel: String) {
+        self.osVersion = osVersion
+        self.deviceModel = deviceModel
+    }
+    
     public func userAgentSystemInfo(for browser: BrowserType) -> String {
         let version = osVersion ?? "14"
         return "Linux; Android \(version); \(deviceModel)"
@@ -64,7 +79,11 @@ public struct AndroidDevice: UADevice {
 public struct WindowsDevice: UADevice {
     public var osVersion: String? = nil
     public var deviceModel: String = "WindowsPC"
-
+    
+    public init(osVersion: String? = nil) {
+        self.osVersion = osVersion
+    }
+    
     public func userAgentSystemInfo(for browser: BrowserType) -> String {
         let version = osVersion ?? "10.0"
         return "Windows NT \(version); Win64; x64"
@@ -74,7 +93,11 @@ public struct WindowsDevice: UADevice {
 public struct LinuxDevice: UADevice {
     public var osVersion: String? = nil
     public var deviceModel: String = "Linux"
-
+    
+    public init(osVersion: String? = nil) {
+        self.osVersion = osVersion
+    }
+    
     public func userAgentSystemInfo(for browser: BrowserType) -> String {
         let version = osVersion ?? "6.0"
         switch browser {
@@ -94,7 +117,11 @@ public struct SafariBrowser: UABrowser {
     public var safariBuild: String = "604.1"
     public var kernelBuild: String = "15E148"
     public var browserType: BrowserType { .safari }
-
+    
+    public init(version: String? = nil) {
+        self.version = version
+    }
+    
     public func userAgentPlatformInfo(for device: UADevice) -> String {
         let version = self.version ?? "18.4"
         if device is IPhoneDevice {
@@ -110,7 +137,11 @@ public struct FirefoxBrowser: UABrowser {
     public var webkitVersion: String = "605.1.15"
     public var kernelBuild: String = "15E148"
     public var browserType: BrowserType { .firefox }
-
+    
+    public init(version: String? = nil) {
+        self.version = version
+    }
+    
     public func userAgentPlatformInfo(for device: UADevice) -> String {
         let version = self.version ?? "137.0"
         switch device {
@@ -131,7 +162,11 @@ public struct FirefoxBrowser: UABrowser {
 public struct ChromeBrowser: UABrowser {
     public var version: String? = nil
     public var browserType: BrowserType { .chrome }
-
+    
+    public init(version: String? = nil) {
+        self.version = version
+    }
+    
     public func userAgentPlatformInfo(for device: UADevice) -> String {
         let version = self.version ?? "123.0.0.0"
         if device is AndroidDevice {
@@ -147,7 +182,11 @@ public struct ChromeBrowser: UABrowser {
 public struct EdgeBrowser: UABrowser {
     public var version: String? = nil
     public var browserType: BrowserType { .edge }
-
+    
+    public init(version: String? = nil) {
+        self.version = version
+    }
+    
     public func userAgentPlatformInfo(for device: UADevice) -> String {
         let version = self.version ?? "123.0.0.0"
         return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(version) Safari/537.36 Edg/\(version)"
@@ -157,7 +196,11 @@ public struct EdgeBrowser: UABrowser {
 public struct OperaBrowser: UABrowser {
     public var version: String? = nil
     public var browserType: BrowserType { .opera }
-
+    
+    public init(version: String? = nil) {
+        self.version = version
+    }
+    
     public func userAgentPlatformInfo(for device: UADevice) -> String {
         let version = self.version ?? "108.0.0.0"
         if device is AndroidDevice {
@@ -176,59 +219,59 @@ public struct OperaBrowser: UABrowser {
 public class APWebBrowserAgentBuilder {
     public var device: UADevice
     public var browser: UABrowser
-
+    
     public init(device: UADevice, browser: UABrowser) {
         self.device = device
         self.browser = browser
     }
-
+    
     public func generate() -> String {
         let systemInfo = device.userAgentSystemInfo(for: browser.browserType)
         let platformInfo = browser.userAgentPlatformInfo(for: device)
         return "Mozilla/5.0 (\(systemInfo)) \(platformInfo)"
     }
-
+    
     public static func random() -> String {
         return builder().randomize().generate()
     }
-
+    
     // MARK: - Builder Style
-
+    
     public static func builder() -> Builder {
         return Builder()
     }
-
+    
     public class Builder {
         private var device: UADevice = IPhoneDevice()
         private var browser: UABrowser = SafariBrowser()
-
+        
         public func withDevice(_ device: UADevice) -> Builder {
             self.device = device
             return self
         }
-
+        
         public func withBrowser(_ browser: UABrowser) -> Builder {
             self.browser = browser
             return self
         }
-
+        
         public func randomize() -> Builder {
             let platform = PlatformType.allCases.randomElement()!
             let browserType = BrowserType.allCases.randomElement()!
             let osVersion = "\(Int.random(in: 14...18)).\(Int.random(in: 0...5))"
             let browserVersion = "\(Int.random(in: 90...140)).0.0.0"
             let deviceModel = ["Pixel 5", "Pixel 7", "Pixel 8"].randomElement()!
-
+            
             self.device = {
                 switch platform {
                 case .iOS: return IPhoneDevice(osVersion: osVersion)
                 case .macOS: return MacDevice(osVersion: osVersion)
                 case .android: return AndroidDevice(osVersion: osVersion, deviceModel: deviceModel)
-                case .windows: return WindowsDevice()
-                case .linux: return LinuxDevice()
+                case .windows: return WindowsDevice(osVersion: osVersion)
+                case .linux: return LinuxDevice(osVersion: osVersion)
                 }
             }()
-
+            
             self.browser = {
                 switch browserType {
                 case .safari: return SafariBrowser(version: osVersion)
@@ -238,14 +281,14 @@ public class APWebBrowserAgentBuilder {
                 case .opera: return OperaBrowser(version: browserVersion)
                 }
             }()
-
+            
             return self
         }
-
+        
         public func build() -> APWebBrowserAgentBuilder {
             return APWebBrowserAgentBuilder(device: device, browser: browser)
         }
-
+        
         public func generate() -> String {
             return build().generate()
         }
