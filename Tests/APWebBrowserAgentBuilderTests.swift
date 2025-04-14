@@ -15,7 +15,7 @@ final class APWebBrowserAgentBuilderTests: XCTestCase {
     func testSafariOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(IPhoneDevice())
+            .withDevice(iOSDevice())
             .withBrowser(SafariBrowser(version: "18.4"))
             .generate()
         
@@ -23,14 +23,14 @@ final class APWebBrowserAgentBuilderTests: XCTestCase {
         XCTAssertEqual(ua, expected)
     }
     
-    func testFirefoxOniOS() {
+    func testChromeOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(IPhoneDevice())
-            .withBrowser(FirefoxBrowser(version: "137.1"))
+            .withDevice(iOSDevice())
+            .withBrowser(ChromeBrowser())
             .generate()
         
-        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/137.1 Mobile/15E148 Safari/605.1.15"
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/135.0.7049.83 Mobile/15E148 Safari/604.1"
         XCTAssertEqual(ua, expected)
     }
     
@@ -45,6 +45,17 @@ final class APWebBrowserAgentBuilderTests: XCTestCase {
         XCTAssertEqual(ua, expected)
     }
     
+    func testChromeOnLinux() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(LinuxDevice())
+            .withBrowser(ChromeBrowser(version: "135.0.0.0"))
+            .generate()
+        
+        let expected = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
+        XCTAssertEqual(ua, expected)
+    }
+    
     func testChromeOnWindows() {
         let ua = APWebBrowserAgentBuilder
             .builder()
@@ -56,6 +67,28 @@ final class APWebBrowserAgentBuilderTests: XCTestCase {
         XCTAssertEqual(ua, expected)
     }
     
+    func testFirefoxOniOS() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(iOSDevice())
+            .withBrowser(FirefoxBrowser(version: "137.1"))
+            .generate()
+        
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/137.1 Mobile/15E148 Safari/605.1.15"
+        XCTAssertEqual(ua, expected)
+    }
+    
+    func testSafariOnMac() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(MacDevice())
+            .withBrowser(SafariBrowser())
+            .generate()
+        
+        let expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Safari/605.1.15"
+        XCTAssertEqual(ua, expected)
+    }
+    
     func testFirefoxOnMac() {
         let ua = APWebBrowserAgentBuilder
             .builder()
@@ -63,46 +96,18 @@ final class APWebBrowserAgentBuilderTests: XCTestCase {
             .withBrowser(FirefoxBrowser(version: "137.0"))
             .generate()
         
-        let expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.4) Gecko/20100101 Firefox/137.0"
+        let expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:137.0) Gecko/20100101 Firefox/137.0"
         XCTAssertEqual(ua, expected)
     }
     
     func testOperaOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(IPhoneDevice())
+            .withDevice(iOSDevice())
             .withBrowser(OperaBrowser(version: "5.5.0"))
             .generate()
         
         let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1 OPT/5.5.0"
         XCTAssertEqual(ua, expected)
-    }
-    
-    func testDefaultiOSUserAgent() {
-        let ua = APWebBrowserAgentBuilder
-            .builder()
-            .withDevice(IPhoneDevice())
-            .withBrowser(SafariBrowser(version: "18.4"))
-            .generate()
-        
-        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1"
-        XCTAssertEqual(ua, expected)
-    }
-    
-    func testNoVersionSetDefaults() {
-        let ua = APWebBrowserAgentBuilder
-            .builder()
-            .withDevice(IPhoneDevice())
-            .withBrowser(SafariBrowser())
-            .generate()
-        
-        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1"
-        XCTAssertEqual(ua, expected)
-    }
-    
-    func testRandomUserAgentFormat() {
-        let ua = APWebBrowserAgentBuilder.random()
-        XCTAssertTrue(ua.starts(with: "Mozilla/5.0"), "Random UA should start with Mozilla/5.0")
-        XCTAssertTrue(ua.contains("Safari") || ua.contains("Firefox") || ua.contains("Chrome"), "Random UA should contain a known browser")
     }
 }

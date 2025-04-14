@@ -77,12 +77,6 @@ print(userAgent)
 - `.windows`
 - `.linux`
 
-### Generate Random
-```swift
-let randomUA = APWebBrowserAgentBuilder.random()
-print(randomUA)
-```
-
 ---
 
 ## App Context User-Agent: `APAppUserAgentBuilder`

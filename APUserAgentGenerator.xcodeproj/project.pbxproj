@@ -16,6 +16,8 @@
 		779046A72DAAEA6A0001A48A /* APUserAgentGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7790469D2DAAEA6A0001A48A /* APUserAgentGenerator.h */; };
 		779046A92DAAEA750001A48A /* APAppUserAgentBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779046A82DAAEA750001A48A /* APAppUserAgentBuilderTests.swift */; };
 		779046AC2DAAED780001A48A /* DeviceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 779046AB2DAAED780001A48A /* DeviceKit */; };
+		77F7D9AE2DAD481A004129DE /* UADevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77F7D9AD2DAD481A004129DE /* UADevice.swift */; };
+		77F7D9B02DAD484C004129DE /* UABrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77F7D9AF2DAD484B004129DE /* UABrowser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,10 @@
 		7790469D2DAAEA6A0001A48A /* APUserAgentGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APUserAgentGenerator.h; sourceTree = "<group>"; };
 		7790469E2DAAEA6A0001A48A /* APAppUserAgentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APAppUserAgentBuilder.swift; sourceTree = "<group>"; };
 		779046A82DAAEA750001A48A /* APAppUserAgentBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APAppUserAgentBuilderTests.swift; sourceTree = "<group>"; };
+		77F7D9AB2DAD4263004129DE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		77F7D9AC2DAD4263004129DE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		77F7D9AD2DAD481A004129DE /* UADevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADevice.swift; sourceTree = "<group>"; };
+		77F7D9AF2DAD484B004129DE /* UABrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UABrowser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +90,8 @@
 		537EDCFA24F49F1E003DC54A = {
 			isa = PBXGroup;
 			children = (
+				77F7D9AC2DAD4263004129DE /* README.md */,
+				77F7D9AB2DAD4263004129DE /* LICENSE */,
 				778D4D322D5E3FE0008738C8 /* Package.swift */,
 				77BAE9522D90D8E7008CC558 /* Sources */,
 				77ADA57A2DA2D6F00087B6EA /* Tests */,
@@ -120,6 +128,8 @@
 		77BAE9522D90D8E7008CC558 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				77F7D9AF2DAD484B004129DE /* UABrowser.swift */,
+				77F7D9AD2DAD481A004129DE /* UADevice.swift */,
 				7790469D2DAAEA6A0001A48A /* APUserAgentGenerator.h */,
 				7790469E2DAAEA6A0001A48A /* APAppUserAgentBuilder.swift */,
 				770457502DAC169400D785FB /* APWebBrowserAgentBuilder.swift */,
@@ -249,8 +259,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77F7D9B02DAD484C004129DE /* UABrowser.swift in Sources */,
 				770457512DAC169600D785FB /* APWebBrowserAgentBuilder.swift in Sources */,
 				779046A42DAAEA6A0001A48A /* APAppUserAgentBuilder.swift in Sources */,
+				77F7D9AE2DAD481A004129DE /* UADevice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
