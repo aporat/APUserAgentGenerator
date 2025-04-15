@@ -64,6 +64,8 @@
 		77F7D9AC2DAD4263004129DE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		77F7D9AD2DAD481A004129DE /* UADevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADevice.swift; sourceTree = "<group>"; };
 		77F7D9AF2DAD484B004129DE /* UABrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UABrowser.swift; sourceTree = "<group>"; };
+		77F7D9B12DAE7FD7004129DE /* ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ci.yml; sourceTree = "<group>"; };
+		77F7D9B32DAE7FD7004129DE /* dependabot.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = dependabot.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 				77F7D9AC2DAD4263004129DE /* README.md */,
 				77F7D9AB2DAD4263004129DE /* LICENSE */,
 				778D4D322D5E3FE0008738C8 /* Package.swift */,
+				77F7D9B42DAE7FD7004129DE /* .github */,
 				77BAE9522D90D8E7008CC558 /* Sources */,
 				77ADA57A2DA2D6F00087B6EA /* Tests */,
 				778D186C2DA2DB2B00101D91 /* Frameworks */,
@@ -135,6 +138,23 @@
 				770457502DAC169400D785FB /* APWebBrowserAgentBuilder.swift */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		77F7D9B22DAE7FD7004129DE /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				77F7D9B12DAE7FD7004129DE /* ci.yml */,
+			);
+			path = workflows;
+			sourceTree = "<group>";
+		};
+		77F7D9B42DAE7FD7004129DE /* .github */ = {
+			isa = PBXGroup;
+			children = (
+				77F7D9B22DAE7FD7004129DE /* workflows */,
+				77F7D9B32DAE7FD7004129DE /* dependabot.yml */,
+			);
+			path = .github;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -440,9 +460,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = APStorePersistence;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Debug;
 		};
@@ -469,8 +491,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = APStorePersistence;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Release;
 		};
@@ -487,9 +511,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = APStorePersistenceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Debug;
 		};
@@ -506,8 +532,10 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = APStorePersistenceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Release;
 		};
