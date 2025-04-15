@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.device }} on ${{ matrix.os }}
+    name: Test (${{ matrix.device }} on ${{ matrix.os }})
     runs-on: macos-latest
     strategy:
       fail-fast: false
