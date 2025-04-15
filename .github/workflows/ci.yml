@@ -36,7 +36,10 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 2.7.8
+          ruby-version: 3.4.3
+
+      - name: Install Slather
+        run: gem install slather
 
       - name: Set project name from repo slug
         run: echo "scheme=$(basename ${{ github.repository }})" >> $GITHUB_ENV
