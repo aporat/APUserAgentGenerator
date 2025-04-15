@@ -124,6 +124,7 @@ PLATFORMS
   arm64-darwin-24
 
 DEPENDENCIES
+  bundler
   danger
   danger-swiftlint
   slather
