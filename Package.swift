@@ -4,8 +4,10 @@ import PackageDescription
 let package = Package(
     name: "APUserAgentGenerator",
     platforms: [
-        .iOS(.v16),
-        .macOS(.v10_15)
+        .macOS(.v10_12),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .watchOS(.v6)
     ],
     products: [
         .library(
@@ -29,5 +31,6 @@ let package = Package(
             dependencies: ["APUserAgentGenerator"],
             path: "Tests"
         ),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )
