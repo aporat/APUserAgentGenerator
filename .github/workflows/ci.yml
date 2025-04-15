@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Run Tests on ${{ matrix.device }} (OS ${{ matrix.os }})
+    name: Tests on ${{ matrix.device }} ${{ matrix.os }}
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -64,7 +64,7 @@ jobs:
 
       - name: Generate Coverage Report (Slather)
         run: |
-          slather coverage \
+          bundle exec slather coverage \
             --scheme "${{ env.scheme }}" \
             --output-directory ./coverage \
             --cobertura-xml \
