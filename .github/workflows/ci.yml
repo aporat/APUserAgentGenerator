@@ -29,6 +29,8 @@ jobs:
           xcode-version: latest-stable
 
       - uses: ruby/setup-ruby@v1
+          with:
+          bundler-cache: true
           
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,16 +42,13 @@ jobs:
 
       - name: Run test on ${{ matrix.device }} (iOS ${{ matrix.os }})
         run: |
-          xcodebuild test \
+          set -o pipefail && \
+             xcodebuild \
              -scheme ${{ env.scheme }} \
              -destination 'platform=${{ matrix.platform }},name=${{ matrix.device }},OS=${{ matrix.os }}' \
              -enableCodeCoverage YES \
              -derivedDataPath ./DerivedData \
-             -resultBundlePath ./TestResults.xcresult
-
-      # Install Slather to generate lcov-compatible coverage
-      - name: Install Slather
-        run: gem install slather
+             -resultBundlePath ./TestResults.xcresult test
       
       # Install xcresultparser
       - name: Install xcresultparser
