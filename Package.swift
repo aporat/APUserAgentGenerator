@@ -4,8 +4,8 @@ import PackageDescription
 let package = Package(
     name: "APUserAgentGenerator",
     platforms: [
-        .macOS(.v10_12),
-        .iOS(.v13),
+        .macOS(.v14),
+        .iOS(.v15),
         .tvOS(.v13),
         .watchOS(.v6)
     ],
