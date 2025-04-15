@@ -60,7 +60,6 @@
 		7790469D2DAAEA6A0001A48A /* APUserAgentGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APUserAgentGenerator.h; sourceTree = "<group>"; };
 		7790469E2DAAEA6A0001A48A /* APAppUserAgentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APAppUserAgentBuilder.swift; sourceTree = "<group>"; };
 		779046A82DAAEA750001A48A /* APAppUserAgentBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APAppUserAgentBuilderTests.swift; sourceTree = "<group>"; };
-		7792C2342DAE85A500DDBE8C /* .ruby-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".ruby-version"; sourceTree = "<group>"; };
 		7792C2352DAE85A500DDBE8C /* Gemfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Gemfile; sourceTree = "<group>"; };
 		7792C2362DAE85A500DDBE8C /* Gemfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Gemfile.lock; sourceTree = "<group>"; };
 		77F7D9AB2DAD4263004129DE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -97,7 +96,6 @@
 			children = (
 				77F7D9AC2DAD4263004129DE /* README.md */,
 				77F7D9AB2DAD4263004129DE /* LICENSE */,
-				7792C2342DAE85A500DDBE8C /* .ruby-version */,
 				7792C2352DAE85A500DDBE8C /* Gemfile */,
 				7792C2362DAE85A500DDBE8C /* Gemfile.lock */,
 				778D4D322D5E3FE0008738C8 /* Package.swift */,
