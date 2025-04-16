@@ -23,7 +23,7 @@ public struct MacDevice: UADevice {
         switch browser.browserType {
         case .firefox:
             let trimmed = version.split(separator: ".").prefix(2).joined(separator: ".")
-            let browserVersion = browser.version ?? ""
+            let browserVersion = browser.version ?? "137.0"
             return "Macintosh; Intel Mac OS X \(trimmed); rv:\(browserVersion)"
         default:
             return "Macintosh; Intel Mac OS X \(version.underscoredVersion())"
