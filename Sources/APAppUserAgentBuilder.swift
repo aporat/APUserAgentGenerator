@@ -3,14 +3,16 @@ import DeviceKit
 
 public final class APAppUserAgentBuilder {
     private var appName: String
+    private var buildNumber: String?
     private var appVersion: String?
     private var platform: String?
     private var platformArchitecture: String?
     private var platformVersion: String?
     private var extraParts: [String] = []
     
-    public init(appName: String? = nil, appVersion: String? = nil, platform: String? = nil, platformArchitecture: String? = nil, platformVersion: String? = nil) {
+    public init(appName: String? = nil, appVersion: String? = nil, buildNumber: String? = nil, platform: String? = nil, platformArchitecture: String? = nil, platformVersion: String? = nil) {
         self.appName = appName ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "App")
+        self.buildNumber = buildNumber ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
         self.appVersion = appVersion ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)
         self.platform = platform ?? Device.current.systemName
         self.platformArchitecture = platformArchitecture ?? Device.identifier
@@ -34,6 +36,10 @@ public final class APAppUserAgentBuilder {
         
         if let platformVersion = platformVersion {
             userAgentParts.append(platformVersion)
+        }
+        
+        if let buildNumber = buildNumber {
+            userAgentParts.append(buildNumber)
         }
         
         userAgentParts.append(contentsOf: extraParts)

@@ -20,7 +20,7 @@ final class APAppUserAgentBuilderTests: XCTestCase {
             .addPart("Build/567")
             .generate()
         
-        let expected = "MyApp 1.0 (iOS; arm64; 18.4; SDK/3.2; Build/567)"
+        let expected = "MyApp 1.0 (iOS; arm64; 18.4; 23796; SDK/3.2; Build/567)"
         XCTAssertEqual(ua, expected)
     }
     
