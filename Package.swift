@@ -1,11 +1,11 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
     name: "APUserAgentGenerator",
     platforms: [
-        .macOS(.v13),
-        .iOS(.v15),
+        .macOS(.v10_14),
+        .iOS(.v17),
         .tvOS(.v13),
         .watchOS(.v6)
     ],
@@ -13,7 +13,7 @@ let package = Package(
         .library(
             name: "APUserAgentGenerator",
             targets: ["APUserAgentGenerator"]
-        ),
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.0.0")
@@ -30,7 +30,6 @@ let package = Package(
             name: "APUserAgentGeneratorTests",
             dependencies: ["APUserAgentGenerator"],
             path: "Tests"
-        ),
-    ],
-    swiftLanguageVersions: [.v5]
+        )
+    ]
 )

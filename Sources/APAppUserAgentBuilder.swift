@@ -1,5 +1,5 @@
 import Foundation
-import DeviceKit
+@preconcurrency import DeviceKit
 
 public final class APAppUserAgentBuilder {
     private var appName: String
