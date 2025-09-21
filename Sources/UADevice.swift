@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Protocols
 
-public protocol UADevice {
+public protocol UADevice: Sendable {
     var osVersion: String? { get }
     var deviceModel: String { get }
     func userAgentSystemInfo(for browser: UABrowser) -> String
@@ -11,13 +11,13 @@ public protocol UADevice {
 // MARK: - Concrete Devices
 
 public struct MacDevice: UADevice {
-    public var osVersion: String? = nil
+    public var osVersion: String?
     public var deviceModel: String = "Macintosh"
-    
+
     public init(osVersion: String? = nil) {
         self.osVersion = osVersion
     }
-    
+
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
         let version = osVersion ?? "10.15.7"
         switch browser.browserType {
@@ -32,13 +32,13 @@ public struct MacDevice: UADevice {
 }
 
 public struct iOSDevice: UADevice {
-    public var osVersion: String? = nil
+    public var osVersion: String?
     public var deviceModel: String = "iPhone"
-    
+
     public init(osVersion: String? = nil) {
         self.osVersion = osVersion
     }
-    
+
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
         let version = osVersion ?? "18.4"
         return "iPhone; CPU iPhone OS \(version.underscoredVersion(limit: 2)) like Mac OS X"
@@ -46,14 +46,14 @@ public struct iOSDevice: UADevice {
 }
 
 public struct AndroidDevice: UADevice {
-    public var osVersion: String? = nil
+    public var osVersion: String?
     public var deviceModel: String
-    
+
     public init(osVersion: String? = nil, deviceModel: String) {
         self.osVersion = osVersion
         self.deviceModel = deviceModel
     }
-    
+
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
         let version = osVersion ?? "14"
         return "Linux; Android \(version); \(deviceModel)"
@@ -61,13 +61,13 @@ public struct AndroidDevice: UADevice {
 }
 
 public struct WindowsDevice: UADevice {
-    public var osVersion: String? = nil
+    public var osVersion: String?
     public var deviceModel: String = "WindowsPC"
-    
+
     public init(osVersion: String? = nil) {
         self.osVersion = osVersion
     }
-    
+
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
         let version = osVersion ?? "10.0"
         return "Windows NT \(version); Win64; x64"
@@ -75,13 +75,13 @@ public struct WindowsDevice: UADevice {
 }
 
 public struct LinuxDevice: UADevice {
-    public var osVersion: String? = nil
+    public var osVersion: String?
     public var deviceModel: String = "Linux"
-    
+
     public init(osVersion: String? = nil) {
         self.osVersion = osVersion
     }
-    
+
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
         let version = osVersion ?? "6.0"
         switch browser.browserType {
@@ -92,3 +92,4 @@ public struct LinuxDevice: UADevice {
         }
     }
 }
+

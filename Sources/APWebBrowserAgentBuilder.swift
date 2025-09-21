@@ -2,46 +2,48 @@ import Foundation
 
 // MARK: - UA Generator
 
-public class APWebBrowserAgentBuilder {
-    public var device: UADevice
-    public var browser: UABrowser
-    
+public final class APWebBrowserAgentBuilder: Sendable {
+    public let device: UADevice
+    public let browser: UABrowser
+
     public init(device: UADevice, browser: UABrowser) {
         self.device = device
         self.browser = browser
     }
-    
+
     public func generate() -> String {
         let systemInfo = device.userAgentSystemInfo(for: browser)
         let platformInfo = browser.userAgentPlatformInfo(for: device)
-        
+
         return "Mozilla/5.0 (\(systemInfo)) \(platformInfo)"
     }
-    
+
     // MARK: - Builder Style
-    
+
     public static func builder() -> Builder {
         return Builder()
     }
-    
-    public class Builder {
+
+    public struct Builder: Sendable {
         private var device: UADevice = iOSDevice()
         private var browser: UABrowser = SafariBrowser()
-        
+
         public func withDevice(_ device: UADevice) -> Builder {
-            self.device = device
-            return self
+            var newBuilder = self
+            newBuilder.device = device
+            return newBuilder
         }
-        
+
         public func withBrowser(_ browser: UABrowser) -> Builder {
-            self.browser = browser
-            return self
+            var newBuilder = self
+            newBuilder.browser = browser
+            return newBuilder
         }
-        
+
         public func build() -> APWebBrowserAgentBuilder {
             return APWebBrowserAgentBuilder(device: device, browser: browser)
         }
-        
+
         public func generate() -> String {
             return build().generate()
         }
@@ -57,3 +59,4 @@ public extension String {
         return limitedParts.joined(separator: "_")
     }
 }
+

@@ -3,29 +3,30 @@ import XCTest
 
 final class APAppUserAgentBuilderTests: XCTestCase {
     
-    func testDefaultGeneration() {
-        let ua = APAppUserAgentBuilder.builder().generate()
+    func testDefaultGeneration() async {
+        let ua = await APAppUserAgentBuilder.builder().generate()
         XCTAssertTrue(ua.starts(with: "App") || ua.starts(with: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""), "User-Agent should start with default app name")
     }
     
-    func testCustomAppUserAgent() {
-        let ua = APAppUserAgentBuilder
+    func testCustomAppUserAgent() async {
+        let ua = await APAppUserAgentBuilder
             .builder()
             .withAppName("MyApp")
             .withAppVersion("1.0")
             .withPlatform("iOS")
             .withPlatformArchitecture("arm64")
             .withPlatformVersion("18.4")
+            .withBuildNumber("B123")
             .addPart("SDK/3.2")
-            .addPart("Build/567")
+            .addPart("ExtraInfo")
             .generate()
         
-        let expected = "MyApp 1.0 (iOS; arm64; 18.4; 23796; SDK/3.2; Build/567)"
+        let expected = "MyApp 1.0 (iOS; arm64; 18.4; B123; SDK/3.2; ExtraInfo)"
         XCTAssertEqual(ua, expected)
     }
     
-    func testPartialFields() {
-        let ua = APAppUserAgentBuilder
+    func testPartialFields() async {
+        let ua = await APAppUserAgentBuilder
             .builder()
             .withAppName("TestApp")
             .withPlatform("tvOS")
