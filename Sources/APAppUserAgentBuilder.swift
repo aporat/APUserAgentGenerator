@@ -1,7 +1,7 @@
 import Foundation
 @preconcurrency import DeviceKit
 
-public final class APAppUserAgentBuilder {
+public final class APAppUserAgentBuilder: Sendable {
     private let appName: String
     private let buildNumber: String?
     private let appVersion: String?
@@ -10,6 +10,7 @@ public final class APAppUserAgentBuilder {
     private let platformVersion: String?
     private let extraParts: [String]
     
+    @MainActor
     public init(appName: String? = nil, appVersion: String? = nil, buildNumber: String? = nil, platform: String? = nil, platformArchitecture: String? = nil, platformVersion: String? = nil, extraParts: [String] = []) {
         self.appName = appName ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "App")
         self.buildNumber = buildNumber ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
@@ -94,6 +95,7 @@ public final class APAppUserAgentBuilder {
             return newBuilder
         }
         
+        @MainActor
         public func build() -> APAppUserAgentBuilder {
             return APAppUserAgentBuilder(
                 appName: appName,
@@ -106,6 +108,7 @@ public final class APAppUserAgentBuilder {
             )
         }
         
+        @MainActor
         public func generate() -> String {
             return build().generate()
         }

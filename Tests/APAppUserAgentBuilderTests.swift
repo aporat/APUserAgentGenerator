@@ -1,14 +1,22 @@
-import XCTest
+import Testing
+import Foundation
 @testable import APUserAgentGenerator
 
-final class APAppUserAgentBuilderTests: XCTestCase {
+@Suite("App User Agent Builder")
+@MainActor
+struct APAppUserAgentBuilderTests {
     
-    func testDefaultGeneration() async {
+    @Test("Default Generation starts with App Name")
+    func defaultGeneration() async {
         let ua = APAppUserAgentBuilder.builder().generate()
-        XCTAssertTrue(ua.starts(with: "App") || ua.starts(with: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""), "User-Agent should start with default app name")
+        
+        let bundleName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
+        
+        #expect(ua.starts(with: "App") || ua.starts(with: bundleName))
     }
     
-    func testCustomAppUserAgent() async {
+    @Test("Custom App User Agent matches exact format")
+    func customAppUserAgent() async {
         let ua = APAppUserAgentBuilder
             .builder()
             .withAppName("MyApp")
@@ -22,17 +30,19 @@ final class APAppUserAgentBuilderTests: XCTestCase {
             .generate()
         
         let expected = "MyApp 1.0 (iOS; arm64; 18.4; B123; SDK/3.2; ExtraInfo)"
-        XCTAssertEqual(ua, expected)
+        
+        #expect(ua == expected)
     }
     
-    func testPartialFields() async {
+    @Test("Partial fields generation")
+    func partialFields() async {
         let ua = APAppUserAgentBuilder
             .builder()
             .withAppName("TestApp")
             .withPlatform("tvOS")
             .generate()
         
-        XCTAssertTrue(ua.starts(with: "TestApp"))
-        XCTAssertTrue(ua.contains("tvOS"))
+        #expect(ua.starts(with: "TestApp"))
+        #expect(ua.contains("tvOS"))
     }
 }

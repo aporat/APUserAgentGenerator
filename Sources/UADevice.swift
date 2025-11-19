@@ -39,8 +39,15 @@ public struct iOSDevice: UADevice {
     public var deviceModel: String = "iPhone"
     
     public init(osVersion: String? = nil) {
-        // Simplified initializer logic
-        self.osVersion = osVersion ?? Device.current.systemVersion
+        if let osVersion {
+            self.osVersion = osVersion
+        } else {
+#if os(iOS)
+            self.osVersion = Device.current.systemVersion
+#else
+            self.osVersion = "26.0"
+#endif
+        }
     }
     
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
