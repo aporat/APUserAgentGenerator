@@ -45,7 +45,7 @@ public struct iOSDevice: UADevice {
 #if os(iOS)
             self.osVersion = Device.current.systemVersion
 #else
-            self.osVersion = "26.0"
+            self.osVersion = "19.1"
 #endif
         }
     }
@@ -58,13 +58,13 @@ public struct iOSDevice: UADevice {
         if let safari = browser as? SafariBrowser {
             let safariVersionString = safari.version(for: self)
             let safariMajorVersion = Int(safariVersionString.split(separator: ".").first ?? "0") ?? 0
-            
-            // For Safari versions that are un-versioned or >= 26.0 (hypothetical future versioning)
-            // Apple freezes the OS version to 18_6 for privacy.
-            if safariMajorVersion >= 26 {
-                reportedOSVersion = "18_6"
+
+            // Starting with Safari 18.0, Apple freezes the OS version for privacy.
+            // The frozen version matches the Safari major version (e.g., Safari 18.x -> "18_0", Safari 19.x -> "19_0")
+            if safariMajorVersion >= 18 {
+                reportedOSVersion = "\(safariMajorVersion)_0"
             } else {
-                // Updated default to iOS 19
+                // For older Safari versions, use the actual OS version.
                 let version = osVersion ?? "19.1"
                 reportedOSVersion = version.underscoredVersion(limit: 2)
             }
@@ -117,10 +117,10 @@ public struct LinuxDevice: UADevice {
     }
     
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
-        let version = osVersion ?? "7.0"
         switch browser.browserType {
         case .firefox:
-            return "X11; Linux x86_64; rv:\(version)"
+            let browserVersion = browser.version(for: self)
+            return "X11; Linux x86_64; rv:\(browserVersion)"
         default:
             return "X11; Linux x86_64"
         }
