@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: Tests on ${{ matrix.device }} ${{ matrix.os }}
-    runs-on: macos-15
+    runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
@@ -25,11 +25,8 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "16.2"
+          xcode-version: latest-stable
 
-      - name: Install iOS Simulator Runtime
-        run: xcodebuild -downloadPlatform iOS
-  
       - name: Set Project Scheme
         run: echo "scheme=$(basename ${{ github.repository }})" >> $GITHUB_ENV
 
