@@ -27,6 +27,9 @@ jobs:
         with:
           xcode-version: "16.2"
 
+      - name: Install iOS Simulator Runtime
+        run: xcodebuild -downloadPlatform iOS
+
       - name: Set Project Scheme
         run: echo "scheme=$(basename ${{ github.repository }})" >> $GITHUB_ENV
 
