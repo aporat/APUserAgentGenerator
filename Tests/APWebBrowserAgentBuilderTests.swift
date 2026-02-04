@@ -1,9 +1,9 @@
-import Testing
 @testable import APUserAgentGenerator
+import Testing
 
 @Suite("Web Browser User Agent Builder")
 struct APWebBrowserAgentBuilderTests {
-    
+
     @Test("Default Configuration")
     func defaultGeneration() {
         let ua = APWebBrowserAgentBuilder
@@ -15,12 +15,12 @@ struct APWebBrowserAgentBuilderTests {
 
         #expect(ua == expected)
     }
-    
+
     @Test("Safari on iOS")
     func safariOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(iOSDevice(osVersion: "18.4"))
+            .withDevice(IOSDevice(osVersion: "18.4"))
             .withBrowser(SafariBrowser(version: "18.4"))
             .generate()
 
@@ -29,12 +29,12 @@ struct APWebBrowserAgentBuilderTests {
 
         #expect(ua == expected)
     }
-    
+
     @Test("Chrome on iOS")
     func chromeOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(iOSDevice(osVersion: "19.1"))
+            .withDevice(IOSDevice(osVersion: "19.1"))
             .withBrowser(ChromeBrowser())
             .generate()
 
@@ -43,7 +43,7 @@ struct APWebBrowserAgentBuilderTests {
 
         #expect(ua == expected)
     }
-    
+
     @Test("Chrome on Android")
     func chromeOnAndroid() {
         let ua = APWebBrowserAgentBuilder
@@ -51,12 +51,12 @@ struct APWebBrowserAgentBuilderTests {
             .withDevice(AndroidDevice(deviceModel: "Pixel 7"))
             .withBrowser(ChromeBrowser(version: "123.0.6312.86"))
             .generate()
-        
+
         let expected = "Mozilla/5.0 (Linux; Android 16; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.86 Mobile Safari/537.36"
-        
+
         #expect(ua == expected)
     }
-    
+
     @Test("Chrome on Linux")
     func chromeOnLinux() {
         let ua = APWebBrowserAgentBuilder
@@ -64,12 +64,12 @@ struct APWebBrowserAgentBuilderTests {
             .withDevice(LinuxDevice())
             .withBrowser(ChromeBrowser(version: "135.0.0.0"))
             .generate()
-        
+
         let expected = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
-        
+
         #expect(ua == expected)
     }
-    
+
     @Test("Chrome on Windows")
     func chromeOnWindows() {
         let ua = APWebBrowserAgentBuilder
@@ -77,17 +77,17 @@ struct APWebBrowserAgentBuilderTests {
             .withDevice(WindowsDevice())
             .withBrowser(ChromeBrowser(version: "123.0.6312.86"))
             .generate()
-        
+
         let expected = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.86 Safari/537.36"
-        
+
         #expect(ua == expected)
     }
-    
+
     @Test("Firefox on iOS")
     func firefoxOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(iOSDevice(osVersion: "19.1"))
+            .withDevice(IOSDevice(osVersion: "19.1"))
             .withBrowser(FirefoxBrowser(version: "137.1"))
             .generate()
 
@@ -96,7 +96,7 @@ struct APWebBrowserAgentBuilderTests {
 
         #expect(ua == expected)
     }
-    
+
     @Test("Safari on Mac")
     func safariOnMac() {
         let ua = APWebBrowserAgentBuilder
@@ -104,12 +104,12 @@ struct APWebBrowserAgentBuilderTests {
             .withDevice(MacDevice())
             .withBrowser(SafariBrowser())
             .generate()
-        
+
         let expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 16_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.1 Safari/605.1.15"
-        
+
         #expect(ua == expected)
     }
-    
+
     @Test("Firefox on Mac")
     func firefoxOnMac() {
         let ua = APWebBrowserAgentBuilder
@@ -117,17 +117,17 @@ struct APWebBrowserAgentBuilderTests {
             .withDevice(MacDevice())
             .withBrowser(FirefoxBrowser(version: "137.0"))
             .generate()
-        
+
         let expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 16.0; rv:137.0) Gecko/20100101 Firefox/137.0"
-        
+
         #expect(ua == expected)
     }
-    
+
     @Test("Opera on iOS")
     func operaOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(iOSDevice(osVersion: "19.1"))
+            .withDevice(IOSDevice(osVersion: "19.1"))
             .withBrowser(OperaBrowser(version: "5.5.0"))
             .generate()
 
@@ -141,7 +141,7 @@ struct APWebBrowserAgentBuilderTests {
     func safariOlderVersionOniOS() {
         let ua = APWebBrowserAgentBuilder
             .builder()
-            .withDevice(iOSDevice(osVersion: "17.4"))
+            .withDevice(IOSDevice(osVersion: "17.4"))
             .withBrowser(SafariBrowser(version: "17.4"))
             .generate()
 
