@@ -68,9 +68,9 @@ public struct ChromeBrowser: UABrowser {
             return userVersion
         }
         switch device {
-        case is IOSDevice: return "148.0.7526.93"
-        case is AndroidDevice: return "148.0.7526.100"
-        default: return "149.0.0.0" // Desktop
+        case is IOSDevice: return "149.0.7827.45"
+        case is AndroidDevice: return "149.0.7827.100"
+        default: return "149.0.7827.45" // Desktop
         }
     }
 

@@ -39,7 +39,7 @@ struct APWebBrowserAgentBuilderTests {
             .generate()
 
         // Chrome (not Safari) uses the actual OS version, not frozen
-        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 19_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/148.0.7526.93 Mobile/15E148 Safari/604.1"
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 19_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/149.0.7827.45 Mobile/15E148 Safari/604.1"
 
         #expect(ua == expected)
     }
