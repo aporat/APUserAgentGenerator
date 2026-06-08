@@ -9,14 +9,14 @@ on:
 jobs:
   test:
     name: Tests on ${{ matrix.device }} ${{ matrix.os }}
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: iOS Simulator
             device: iPhone 16 Pro
-            os: "18.2"
+            os: "18.4"
 
     steps:
       - name: Checkout Repository
