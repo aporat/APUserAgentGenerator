@@ -58,7 +58,10 @@ public struct IOSDevice: UADevice {
         // It checks the browser's version to decide if the OS version should be "frozen".
         if let safari = browser as? SafariBrowser {
             let safariVersionString = safari.version(for: self)
-            let safariMajorVersion = Int(safariVersionString.split(separator: ".").first ?? "0") ?? 0
+            let leadingDigits = safariVersionString
+                .split(separator: ".").first
+                .map { $0.prefix(while: \.isNumber) } ?? ""
+            let safariMajorVersion = Int(leadingDigits) ?? 0
 
             // Starting with Safari 18.0, Apple freezes the OS version for privacy.
             // The frozen version matches the Safari major version (e.g., Safari 18.x -> "18_0", Safari 19.x -> "19_0")
@@ -90,7 +93,13 @@ public struct AndroidDevice: UADevice {
 
     public func userAgentSystemInfo(for browser: UABrowser) -> String {
         let version = osVersion ?? "16"
-        return "Linux; Android \(version); \(deviceModel)"
+        switch browser.browserType {
+        case .firefox:
+            let browserVersion = browser.version(for: self)
+            return "Android \(version); Mobile; rv:\(browserVersion)"
+        default:
+            return "Linux; Android \(version); \(deviceModel)"
+        }
     }
 }
 

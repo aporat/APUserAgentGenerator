@@ -136,11 +136,15 @@ public struct EdgeBrowser: UABrowser {
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
         let platformVersion = self.version(for: device)
+        let chromeMajor = platformVersion.split(separator: ".").first.map(String.init) ?? "148"
+        let chromeVersion = "\(chromeMajor).0.0.0"
         switch device {
         case is IOSDevice:
             return "AppleWebKit/605.1.15 (KHTML, like Gecko) EdgiOS/\(platformVersion) Mobile/15E148 Safari/604.1"
+        case is AndroidDevice:
+            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Mobile Safari/537.36 EdgA/\(platformVersion)"
         default:
-            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/\(platformVersion)"
+            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Safari/537.36 Edg/\(platformVersion)"
         }
     }
 }
@@ -157,7 +161,7 @@ public struct OperaBrowser: UABrowser {
         if let userVersion = self.version {
             return userVersion
         }
-        return "134.0"
+        return "134.0.0.0"
     }
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
@@ -169,10 +173,10 @@ public struct OperaBrowser: UABrowser {
             return "\(iosUA) OPT/\(platformVersion)"
         case is AndroidDevice:
             let androidUA = "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Mobile Safari/537.36"
-            return "\(androidUA) OPR/\(platformVersion).0.0"
+            return "\(androidUA) OPR/\(platformVersion)"
         default:
             let desktopUA = "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Safari/537.36"
-            return "\(desktopUA) OPR/\(platformVersion).0.0"
+            return "\(desktopUA) OPR/\(platformVersion)"
         }
     }
 }

@@ -34,6 +34,26 @@ struct APAppUserAgentBuilderTests {
         #expect(ua == expected)
     }
 
+    @Test("addPart sanitizes unsafe characters and drops empty input")
+    func addPartSanitization() async {
+        let ua = APAppUserAgentBuilder
+            .builder()
+            .withAppName("MyApp")
+            .withAppVersion("1.0")
+            .withPlatform("iOS")
+            .withPlatformArchitecture("arm64")
+            .withPlatformVersion("18.4")
+            .withBuildNumber("B123")
+            .addPart("   ")
+            .addPart("a; X-Forwarded-For: 1.1.1.1")
+            .addPart("(injected)")
+            .generate()
+
+        let expected = "MyApp 1.0 (iOS; arm64; 18.4; B123; a, X-Forwarded-For: 1.1.1.1; injected)"
+
+        #expect(ua == expected)
+    }
+
     @Test("Partial fields generation")
     func partialFields() async {
         let ua = APAppUserAgentBuilder

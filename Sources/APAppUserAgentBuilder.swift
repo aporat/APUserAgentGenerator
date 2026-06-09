@@ -99,8 +99,15 @@ public final class APAppUserAgentBuilder: Sendable {
         }
 
         public func addPart(_ part: String) -> Builder {
+            let sanitized = part
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .replacingOccurrences(of: ";", with: ",")
+                .replacingOccurrences(of: "(", with: "")
+                .replacingOccurrences(of: ")", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !sanitized.isEmpty else { return self }
             var newBuilder = self
-            newBuilder.extraParts.append(part.trimmingCharacters(in: .whitespacesAndNewlines))
+            newBuilder.extraParts.append(sanitized)
             return newBuilder
         }
 

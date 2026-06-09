@@ -151,6 +151,72 @@ struct APWebBrowserAgentBuilderTests {
         #expect(ua == expected)
     }
 
+    @Test("Firefox on Android")
+    func firefoxOnAndroid() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(AndroidDevice(deviceModel: "Pixel 7"))
+            .withBrowser(FirefoxBrowser(version: "148.0"))
+            .generate()
+
+        let expected = "Mozilla/5.0 (Android 16; Mobile; rv:148.0) Gecko/148.0 Firefox/148.0"
+
+        #expect(ua == expected)
+    }
+
+    @Test("Edge on Android")
+    func edgeOnAndroid() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(AndroidDevice(deviceModel: "Pixel 7"))
+            .withBrowser(EdgeBrowser(version: "148.0.2739.45"))
+            .generate()
+
+        let expected = "Mozilla/5.0 (Linux; Android 16; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36 EdgA/148.0.2739.45"
+
+        #expect(ua == expected)
+    }
+
+    @Test("Opera on Android preserves multi-segment version verbatim")
+    func operaOnAndroidPreservesVersion() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(AndroidDevice(deviceModel: "Pixel 7"))
+            .withBrowser(OperaBrowser(version: "115.0.5322.119"))
+            .generate()
+
+        let expected = "Mozilla/5.0 (Linux; Android 16; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36 OPR/115.0.5322.119"
+
+        #expect(ua == expected)
+    }
+
+    @Test("Edge embedded Chrome version tracks Edge major")
+    func edgeChromeMajorTracks() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(WindowsDevice())
+            .withBrowser(EdgeBrowser(version: "150.0.3000.10"))
+            .generate()
+
+        let expected = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.3000.10"
+
+        #expect(ua == expected)
+    }
+
+    @Test("Safari version with non-numeric suffix still freezes when major parses")
+    func safariVersionWithSuffixFreezes() {
+        let ua = APWebBrowserAgentBuilder
+            .builder()
+            .withDevice(IOSDevice(osVersion: "19.1"))
+            .withBrowser(SafariBrowser(version: "19-beta"))
+            .generate()
+
+        // "19-beta" → leading digits "19" → ≥ 18 → frozen to 19_0
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19-beta Mobile/15E148 Safari/604.1"
+
+        #expect(ua == expected)
+    }
+
     @Test("Firefox on Linux uses browser version for rv parameter")
     func firefoxOnLinux() {
         let ua = APWebBrowserAgentBuilder
