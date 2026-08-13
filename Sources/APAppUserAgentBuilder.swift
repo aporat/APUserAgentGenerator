@@ -1,5 +1,7 @@
 @preconcurrency import DeviceKit
 import Foundation
+import SwifterSwift
+import UIKit
 
 public final class APAppUserAgentBuilder: Sendable {
     private let appName: String
@@ -21,9 +23,8 @@ public final class APAppUserAgentBuilder: Sendable {
         extraParts: [String] = []
     ) {
         self.appName = appName ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "App")
-        self.buildNumber = buildNumber ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
-        let shortVersionKey = "CFBundleShortVersionString"
-        self.appVersion = appVersion ?? (Bundle.main.object(forInfoDictionaryKey: shortVersionKey) as? String)
+        self.buildNumber = buildNumber ?? UIApplication.shared.buildNumber
+        self.appVersion = appVersion ?? UIApplication.shared.version
         self.platform = platform ?? Device.current.systemName
         self.platformArchitecture = platformArchitecture ?? Device.identifier
         self.platformVersion = platformVersion ?? Device.current.systemVersion
