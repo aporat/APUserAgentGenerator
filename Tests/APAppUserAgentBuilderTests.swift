@@ -63,12 +63,17 @@ struct APAppUserAgentBuilderTests {
             .withAppName("My\r\nApp")
             .withAppVersion("1.0")
             .withPlatform("iOS")
+            // Pin the auto-detected fields too, so the expectation does not
+            // depend on whichever simulator the suite happens to run on.
+            .withPlatformArchitecture("arm64")
+            .withPlatformVersion("27.0")
+            .withBuildNumber("B123")
             .addPart("ok\r\nX-Injected: yes")
             .generate()
 
         #expect(!ua.contains("\n"))
         #expect(!ua.contains("\r"))
-        #expect(ua == "MyApp 1.0 (iOS; okX-Injected: yes)")
+        #expect(ua == "MyApp 1.0 (iOS; arm64; 27.0; B123; okX-Injected: yes)")
     }
 
     @Test("The initializer sanitizes too, not just the builder")
