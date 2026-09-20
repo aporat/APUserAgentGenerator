@@ -4,7 +4,11 @@ import PackageDescription
 let package = Package(
     name: "APUserAgentGenerator",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .macOS(.v14),
+        .tvOS(.v17),
+        .watchOS(.v10),
+        .visionOS(.v1)
     ],
     products: [
         .library(
@@ -13,15 +17,19 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.8.0"),
-        .package(url: "https://github.com/SwifterSwift/SwifterSwift.git", from: "8.0.0")
+        .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.8.0")
     ],
     targets: [
         .target(
             name: "APUserAgentGenerator",
             dependencies: [
-                .product(name: "DeviceKit", package: "DeviceKit"),
-                "SwifterSwift"
+                // DeviceKit does not support macOS, and only the app-side
+                // builder needs it. The browser builders are pure string work.
+                .product(
+                    name: "DeviceKit",
+                    package: "DeviceKit",
+                    condition: .when(platforms: [.iOS, .tvOS, .watchOS, .visionOS])
+                )
             ],
             resources: [
                 .process("PrivacyInfo.xcprivacy")

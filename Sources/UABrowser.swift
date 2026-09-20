@@ -6,10 +6,24 @@ public enum BrowserType: CaseIterable, Sendable {
     case safari, chrome, firefox, edge, opera
 }
 
+public extension BrowserType {
+    /// A browser of this type using the package's default versions.
+    var browser: UABrowser {
+        switch self {
+        case .safari: SafariBrowser()
+        case .chrome: ChromeBrowser()
+        case .firefox: FirefoxBrowser()
+        case .edge: EdgeBrowser()
+        case .opera: OperaBrowser()
+        }
+    }
+}
+
 // MARK: - Protocols
 
 public protocol UABrowser: Sendable {
-    /// The browser's version, which is now optional again.
+    /// An explicit version override. When `nil`, ``version(for:)`` supplies a
+    /// platform-appropriate default from ``UAVersions``.
     var version: String? { get }
 
     /// Returns the appropriate version string for a given device platform.
@@ -19,6 +33,17 @@ public protocol UABrowser: Sendable {
     func userAgentPlatformInfo(for device: UADevice) -> String
 
     var browserType: BrowserType { get }
+
+    /// Whether this browser renders with the system WebKit on iOS and therefore
+    /// inherits Apple's frozen OS token.
+    ///
+    /// True for every iOS browser except Chrome, which assembles its own
+    /// User-Agent and still reports the real iOS version.
+    var usesSystemWebKitUserAgent: Bool { get }
+}
+
+public extension UABrowser {
+    var usesSystemWebKitUserAgent: Bool { true }
 }
 
 // MARK: - Concrete Browsers
@@ -32,25 +57,19 @@ public struct SafariBrowser: UABrowser {
     }
 
     public func version(for device: UADevice) -> String {
-        // Use user-provided version if it exists, otherwise fall back to defaults.
-        if let userVersion = self.version {
-            return userVersion
-        }
-        switch device {
-        case is MacDevice: return "19.1"
-        default: return "19.0" // iOS and fallback
-        }
+        version ?? UAVersions.safari
     }
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
-        let platformVersion = self.version(for: device)
+        let platformVersion = version(for: device)
+        let engine = UAVersions.Engine.webKit
+
         switch device {
-        case is IOSDevice:
-            return "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(platformVersion) Mobile/15E148 Safari/604.1"
         case is MacDevice:
-            return "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(platformVersion) Safari/605.1.15"
+            return "\(engine) Version/\(platformVersion) \(UAVersions.Engine.safariDesktop)"
         default:
-            return "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/\(platformVersion) Mobile/15E148 Safari/604.1"
+            // iOS, and the fallback for platforms Safari does not ship on.
+            return "\(engine) Version/\(platformVersion) Mobile/\(UAVersions.Engine.iOSBuild) \(UAVersions.Engine.safariMobile)"
         }
     }
 }
@@ -59,30 +78,34 @@ public struct ChromeBrowser: UABrowser {
     public var version: String?
     public var browserType: BrowserType { .chrome }
 
+    /// Chrome for iOS builds its User-Agent itself rather than reusing WebKit's,
+    /// so it is the one iOS browser that still reports the real OS version.
+    public var usesSystemWebKitUserAgent: Bool { false }
+
     public init(version: String? = nil) {
         self.version = version
     }
 
     public func version(for device: UADevice) -> String {
-        if let userVersion = self.version {
-            return userVersion
+        if let version {
+            return version
         }
         switch device {
-        case is IOSDevice: return "149.0.7827.45"
-        case is AndroidDevice: return "149.0.7827.100"
-        default: return "149.0.7827.45" // Desktop
+        case is IOSDevice: return UAVersions.chromeIOS
+        case is AndroidDevice: return UAVersions.chromeAndroid
+        default: return UAVersions.chromeDesktop
         }
     }
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
-        let platformVersion = self.version(for: device)
+        let platformVersion = version(for: device)
         switch device {
         case is IOSDevice:
-            return "AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/\(platformVersion) Mobile/15E148 Safari/604.1"
+            return "\(UAVersions.Engine.webKit) CriOS/\(platformVersion) Mobile/\(UAVersions.Engine.iOSBuild) \(UAVersions.Engine.safariMobile)"
         case is AndroidDevice:
-            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(platformVersion) Mobile Safari/537.36"
+            return "\(UAVersions.Engine.blink) Chrome/\(platformVersion) Mobile \(UAVersions.Engine.safariBlink)"
         default:
-            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(platformVersion) Safari/537.36"
+            return "\(UAVersions.Engine.blink) Chrome/\(platformVersion) \(UAVersions.Engine.safariBlink)"
         }
     }
 }
@@ -96,22 +119,21 @@ public struct FirefoxBrowser: UABrowser {
     }
 
     public func version(for device: UADevice) -> String {
-        if let userVersion = self.version {
-            return userVersion
-        }
-        // Firefox uses a consistent version number across platforms in this example
-        return "148.0"
+        // Firefox ships the same version number on every platform.
+        version ?? UAVersions.firefox
     }
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
-        let platformVersion = self.version(for: device)
+        let platformVersion = version(for: device)
         switch device {
         case is IOSDevice:
-            return "AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/\(platformVersion) Mobile/15E148 Safari/604.1"
+            // Firefox for iOS omits the `Version/` token and, unlike Safari on
+            // iOS, closes with Safari/605.1.15 rather than Safari/604.1.
+            return "\(UAVersions.Engine.webKit) FxiOS/\(platformVersion) Mobile/\(UAVersions.Engine.iOSBuild) \(UAVersions.Engine.safariDesktop)"
         case is AndroidDevice:
             return "Gecko/\(platformVersion) Firefox/\(platformVersion)"
         default: // Mac, Windows, Linux
-            return "Gecko/20100101 Firefox/\(platformVersion)"
+            return "Gecko/\(UAVersions.Engine.geckoTrail) Firefox/\(platformVersion)"
         }
     }
 }
@@ -125,26 +147,32 @@ public struct EdgeBrowser: UABrowser {
     }
 
     public func version(for device: UADevice) -> String {
-        if let userVersion = self.version {
-            return userVersion
+        if let version {
+            return version
         }
         switch device {
-        case is IOSDevice: return "148.0.2739.40"
-        default: return "148.0.2739.45" // Desktop
+        case is IOSDevice: return UAVersions.edgeIOS
+        case is AndroidDevice: return UAVersions.edgeAndroid
+        default: return UAVersions.edgeDesktop
         }
     }
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
-        let platformVersion = self.version(for: device)
-        let chromeMajor = platformVersion.split(separator: ".").first.map(String.init) ?? "148"
-        let chromeVersion = "\(chromeMajor).0.0.0"
+        let platformVersion = version(for: device)
+
         switch device {
         case is IOSDevice:
-            return "AppleWebKit/605.1.15 (KHTML, like Gecko) EdgiOS/\(platformVersion) Mobile/15E148 Safari/604.1"
+            // Edge on iOS renders with system WebKit, so it carries Safari's
+            // `Version/` token alongside its own `EdgiOS/` token.
+            return "\(UAVersions.Engine.webKit) Version/\(UAVersions.safari) EdgiOS/\(platformVersion) Mobile/\(UAVersions.Engine.iOSBuild) \(UAVersions.Engine.safariDesktop)"
         case is AndroidDevice:
-            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Mobile Safari/537.36 EdgA/\(platformVersion)"
+            // Android keeps the unreduced Chrome version.
+            return "\(UAVersions.Engine.blink) Chrome/\(UAVersions.chromeAndroid) Mobile \(UAVersions.Engine.safariBlink) EdgA/\(platformVersion)"
         default:
-            return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Safari/537.36 Edg/\(platformVersion)"
+            // Desktop Edge reduces the embedded Chrome version, whose major
+            // always matches Edge's own.
+            let chromeMajor = platformVersion.majorVersionComponent ?? String(UAVersions.safariMajor)
+            return "\(UAVersions.Engine.blink) Chrome/\(chromeMajor).0.0.0 \(UAVersions.Engine.safariBlink) Edg/\(platformVersion)"
         }
     }
 }
@@ -158,24 +186,28 @@ public struct OperaBrowser: UABrowser {
     }
 
     public func version(for device: UADevice) -> String {
-        if let userVersion = self.version {
-            return userVersion
+        if let version {
+            return version
         }
-        return "134.0.0.0"
+        switch device {
+        case is IOSDevice: return UAVersions.operaIOS
+        case is AndroidDevice: return UAVersions.operaAndroid
+        default: return UAVersions.operaDesktop
+        }
     }
 
     public func userAgentPlatformInfo(for device: UADevice) -> String {
-        let platformVersion = self.version(for: device)
-        let chromeVersion = "148.0.0.0" // Opera's UA string often includes a recent Chrome version
+        let platformVersion = version(for: device)
         switch device {
         case is IOSDevice:
-            let iosUA = "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Mobile/15E148 Safari/604.1"
+            // Opera for iOS still reports the `OPT/` token it inherited from Opera Touch.
+            let iosUA = "\(UAVersions.Engine.webKit) Version/\(UAVersions.safari) Mobile/\(UAVersions.Engine.iOSBuild) \(UAVersions.Engine.safariMobile)"
             return "\(iosUA) OPT/\(platformVersion)"
         case is AndroidDevice:
-            let androidUA = "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Mobile Safari/537.36"
+            let androidUA = "\(UAVersions.Engine.blink) Chrome/\(UAVersions.operaAndroidChrome) Mobile \(UAVersions.Engine.safariBlink)"
             return "\(androidUA) OPR/\(platformVersion)"
         default:
-            let desktopUA = "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/\(chromeVersion) Safari/537.36"
+            let desktopUA = "\(UAVersions.Engine.blink) Chrome/\(UAVersions.operaDesktopChrome) \(UAVersions.Engine.safariBlink)"
             return "\(desktopUA) OPR/\(platformVersion)"
         }
     }

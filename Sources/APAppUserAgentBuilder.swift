@@ -1,6 +1,6 @@
+#if canImport(UIKit)
 @preconcurrency import DeviceKit
 import Foundation
-import SwifterSwift
 import UIKit
 
 public final class APAppUserAgentBuilder: Sendable {
@@ -22,13 +22,21 @@ public final class APAppUserAgentBuilder: Sendable {
         platformVersion: String? = nil,
         extraParts: [String] = []
     ) {
-        self.appName = appName ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "App")
-        self.buildNumber = buildNumber ?? UIApplication.shared.buildNumber
-        self.appVersion = appVersion ?? UIApplication.shared.version
-        self.platform = platform ?? Device.current.systemName
-        self.platformArchitecture = platformArchitecture ?? Device.identifier
-        self.platformVersion = platformVersion ?? Device.current.systemVersion
-        self.extraParts = extraParts
+        let resolvedName = appName ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
+        // Every field is sanitized here rather than in `Builder`, so values
+        // passed straight to this initializer cannot inject header separators.
+        self.appName = Self.sanitized(resolvedName) ?? "App"
+        self.buildNumber = Self.sanitized(buildNumber ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
+        self.appVersion = Self.sanitized(appVersion ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)
+        self.platform = Self.sanitized(platform ?? Device.current.systemName)
+        self.platformArchitecture = Self.sanitized(platformArchitecture ?? Device.identifier)
+        self.platformVersion = Self.sanitized(platformVersion ?? Device.current.systemVersion)
+        self.extraParts = extraParts.compactMap(Self.sanitized)
+    }
+
+    private static func sanitized(_ value: String?) -> String? {
+        guard let sanitized = value?.sanitizedUserAgentToken(), !sanitized.isEmpty else { return nil }
+        return sanitized
     }
 
     public func generate() -> String {
@@ -43,15 +51,16 @@ public final class APAppUserAgentBuilder: Sendable {
         finalParts.append(contentsOf: extraParts)
 
         var result = appName
-        if let version = appVersion {
-            result += " \(version)"
+        if let appVersion {
+            result += " \(appVersion)"
         }
 
+        guard !finalParts.isEmpty else { return result }
         return result + " (" + finalParts.joined(separator: "; ") + ")"
     }
 
     public static func builder() -> Builder {
-        return Builder()
+        Builder()
     }
 
     public struct Builder: Sendable {
@@ -100,12 +109,7 @@ public final class APAppUserAgentBuilder: Sendable {
         }
 
         public func addPart(_ part: String) -> Builder {
-            let sanitized = part
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .replacingOccurrences(of: ";", with: ",")
-                .replacingOccurrences(of: "(", with: "")
-                .replacingOccurrences(of: ")", with: "")
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let sanitized = part.sanitizedUserAgentToken()
             guard !sanitized.isEmpty else { return self }
             var newBuilder = self
             newBuilder.extraParts.append(sanitized)
@@ -114,7 +118,7 @@ public final class APAppUserAgentBuilder: Sendable {
 
         @MainActor
         public func build() -> APAppUserAgentBuilder {
-            return APAppUserAgentBuilder(
+            APAppUserAgentBuilder(
                 appName: appName,
                 appVersion: appVersion,
                 buildNumber: buildNumber,
@@ -127,7 +131,8 @@ public final class APAppUserAgentBuilder: Sendable {
 
         @MainActor
         public func generate() -> String {
-            return build().generate()
+            build().generate()
         }
     }
 }
+#endif
