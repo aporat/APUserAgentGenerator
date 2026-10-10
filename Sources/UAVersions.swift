@@ -2,92 +2,103 @@ import Foundation
 
 /// A single place to bump every version token this package emits.
 ///
-/// Values were last verified on **2026-09-20** against vendor release notes and
-/// real captured User-Agent strings. When bumping, only this file should change.
+/// Versions are stored **unreduced**, exactly as the vendor publishes them, so
+/// they can be compared against release feeds. The formatter reduces them to
+/// what each browser actually sends (`Chrome/156.0.0.0`, `Firefox/157.0`, …).
 ///
-/// Two conventions matter here:
+/// Last verified on **2026-10-10** (see ``lastVerified``) against:
+/// * Chrome — `versionhistory.googleapis.com` (stable channel, per platform)
+/// * Firefox — `product-details.mozilla.org`; Firefox for iOS — App Store lookup
+/// * Edge — `edgeupdates.microsoft.com/api/products` (stable, per platform)
+/// * Opera — `get.geo.opera.com/pub/opera/` and the Opera desktop changelog;
+///   Opera for iOS — App Store lookup
+/// * iOS — `gdmf.apple.com/v2/pmv`
 ///
-/// * **Reduced versions.** Chromium-based browsers freeze the minor/build/patch
-///   fields of the `Chrome/` token to `0.0.0` on desktop (UA reduction, Chrome
-///   101+). The full four-part version only survives in `CriOS/`, `Edg/`,
-///   `EdgA/` and the `Chrome/` token on Android.
-/// * **Frozen platform tokens.** Apple, Google and Mozilla all pin the OS
-///   portion of the UA to a historical value for anti-fingerprinting. Those
-///   constants live in ``Frozen``.
+/// `scripts/check-versions.py` re-runs those checks; the scheduled
+/// *Version freshness* workflow fails when a default falls behind.
 public enum UAVersions {
+
+    /// The date the constants below were last checked against vendor feeds.
+    public static let lastVerified = "2026-10-10"
 
     // MARK: - Browsers
 
-    /// Safari 27.0, shipped 2026-09-14 with iOS 27 / macOS 27.
-    public static let safari = "27.0"
+    /// Safari on macOS. Safari on iOS has no constant: it ships with the OS, so
+    /// its version is derived from the device's iOS version.
+    public static let safariMacOS = "27.0"
 
-    /// Major component of ``safari``, used when another browser has to embed a
-    /// `Version/` token of its own.
-    public static let safariMajor = 27
+    /// Chrome stable on desktop (Windows/macOS). Sent reduced: `Chrome/156.0.0.0`.
+    public static let chrome = "156.0.8078.12"
+    /// Chrome stable on Android. Also sent reduced since Chrome 110.
+    public static let chromeAndroid = "156.0.8078.25"
+    /// Chrome stable on iOS. `CriOS/` is the one Chrome token that keeps the
+    /// full four-part version. iOS ships on its own train.
+    public static let chromeIOS = "155.0.8059.37"
 
-    /// Chrome 153.0.8010.50 (desktop), reduced for the UA string.
-    public static let chromeDesktop = "153.0.0.0"
-    /// Chrome 153.0.8010.49 (Android). Android keeps the full version.
-    public static let chromeAndroid = "153.0.8010.49"
-    /// Chrome 154.0.8037.41 (iOS). iOS ships on a faster train than desktop.
-    public static let chromeIOS = "154.0.8037.41"
+    /// Firefox stable (desktop and Android share a version). Sent as
+    /// `Firefox/157.0` — Gecko only ever reports `<major>.0`.
+    public static let firefox = "157.0.1"
+    /// Firefox for iOS, sent verbatim in `FxiOS/`.
+    public static let firefoxIOS = "157.1"
 
-    /// Firefox 156.0 — desktop, Android and iOS share a version.
-    public static let firefox = "156.0"
-
-    /// Edge 153.0.4234.48 (desktop).
-    public static let edgeDesktop = "153.0.4234.48"
-    /// Edge 153.0.4234.32 (Android).
-    public static let edgeAndroid = "153.0.4234.32"
-    /// Edge 153.4234.46 (iOS). iOS drops the third component.
+    /// Edge stable on desktop. Sent reduced: `Edg/155.0.0.0`.
+    public static let edge = "155.0.4283.45"
+    /// Edge stable on Android. Sent reduced: `EdgA/154.0.0.0`.
+    public static let edgeAndroid = "154.0.4258.38"
+    /// Edge for iOS, sent verbatim in `EdgiOS/`. Edge for iOS drops the
+    /// always-zero minor component (`153.0.4234.46` → `153.4234.46`).
     public static let edgeIOS = "153.4234.46"
 
-    /// Opera 136 stable, reduced. Built on Chromium 152.
-    public static let operaDesktop = "136.0.0.0"
-    /// The `Chrome/` token Opera desktop embeds (Chromium 152).
-    public static let operaDesktopChrome = "152.0.0.0"
-    /// Opera for Android, reduced.
-    public static let operaAndroid = "100.0.0.0"
-    /// The `Chrome/` token Opera for Android embeds. Opera mobile lags desktop.
-    public static let operaAndroidChrome = "148.0.0.0"
+    /// Opera stable on desktop. Sent reduced: `OPR/137.0.0.0`.
+    public static let opera = "137.0.6036.39"
+    /// Opera desktop major N is built on Chromium N + 16 (Opera 137 →
+    /// Chromium 153, per the Opera 137 changelog). Used to derive the embedded
+    /// `Chrome/` token when only the Opera version is overridden.
+    public static let operaChromiumOffset = 16
+    /// Opera for Android, sent verbatim in `OPR/`.
+    public static let operaAndroid = "102.3.5206.90530"
+    /// Opera for Android major N is built on roughly Chromium N + 48. Opera does
+    /// not publish this mapping, so treat it as an estimate.
+    public static let operaAndroidChromiumOffset = 48
     /// Opera for iOS, which still reports itself with the `OPT/` (Opera Touch) token.
-    public static let operaIOS = "6.6.2"
+    public static let operaIOS = "6.7.3"
 
     // MARK: - Operating systems
 
-    /// iOS 27.0, shipped 2026-09-14.
-    public static let iOS = "27.0"
-    /// Android 17, shipped 2026-06-16.
+    /// The current iOS release. ``IOSDevice/init(osVersion:)`` defaults to it.
+    public static let iOS = "27.0.1"
+    /// The current Android release, used only when an ``AndroidDevice`` names a
+    /// model (otherwise the frozen token is sent).
     public static let android = "17"
-    /// Windows has reported `NT 10.0` since Windows 10 and did not change for 11 or 12.
-    public static let windowsNT = "10.0"
 
     // MARK: - Frozen platform tokens
 
     /// OS tokens that vendors deliberately pin to a historical value.
     public enum Frozen {
-        /// WebKit reports this instead of the real iOS version starting with
-        /// iOS 26 / Safari 26. It tracks the newest iOS 18 security release,
-        /// so it does creep forward — just far more slowly than iOS itself.
-        ///
-        /// This applies to every browser that renders with the system WebKit
-        /// (Safari, Edge, Firefox, Opera on iOS). Chrome for iOS builds its own
-        /// UA and still reports the real version — see
-        /// ``UABrowser/usesSystemWebKitUserAgent``.
-        public static let iOSVersion = "18_7_8"
+        /// WebKit reports `iPhone OS 18_7` instead of the real version on
+        /// devices running iOS 26 or later (WebKit's `Quirks` /
+        /// `UserAgentIOS`). Applies to every browser that uses the system
+        /// WebKit User-Agent — Safari, Edge, Firefox and Opera — but not to
+        /// Chrome, which assembles its own.
+        public static let iOSVersion = "18_7"
 
-        /// The Safari major version that introduced the iOS freeze.
-        public static let iOSFreezeIntroducedInSafari = 26
+        /// The first iOS major version whose WebKit reports ``iOSVersion``.
+        /// The freeze is decided by the *device's* iOS version, not by any
+        /// browser version.
+        public static let iOSFreezeMajor = 26
 
         /// Safari, Chrome and Edge have all reported macOS as 10.15.7 since
         /// Safari 15 / Chrome 90, regardless of the real macOS version.
         public static let macOSVersion = "10_15_7"
 
-        /// Firefox uses dotted, two-component form for the same frozen value.
+        /// Firefox uses the dotted, two-component form of the same value.
         public static let macOSVersionDotted = "10.15"
 
-        /// Chrome's reduced Android token, in use since Chrome 110. Both the
-        /// Android version and the device model are replaced.
+        /// Every browser has reported `Windows NT 10.0` since Windows 10.
+        public static let windowsNT = "10.0"
+
+        /// Chrome's reduced Android token (Chrome 110+), also used by Edge and
+        /// Opera, and Firefox for Android's frozen OS version (Firefox 122+).
         public static let androidVersion = "10"
         /// The placeholder device model that accompanies ``androidVersion``.
         public static let androidModel = "K"
@@ -101,7 +112,7 @@ public enum UAVersions {
         public static let blink = "AppleWebKit/537.36 (KHTML, like Gecko)"
         /// The build token every iOS browser reports.
         public static let iOSBuild = "15E148"
-        /// Trailing Safari token for Safari and Chrome on iOS.
+        /// Trailing Safari token for Safari, Chrome and Opera on iOS.
         public static let safariMobile = "Safari/604.1"
         /// Trailing Safari token for Safari on macOS, and for Firefox/Edge on iOS.
         public static let safariDesktop = "Safari/605.1.15"
@@ -109,5 +120,30 @@ public enum UAVersions {
         public static let safariBlink = "Safari/537.36"
         /// Gecko's frozen build id on desktop.
         public static let geckoTrail = "20100101"
+    }
+
+    // MARK: - Defaults
+
+    /// The version a browser of `kind` defaults to on `platform`, unreduced.
+    ///
+    /// Returns `nil` where the default depends on the device (Safari on iOS
+    /// follows the iOS version) or where the browser does not ship.
+    public static func defaultVersion(for kind: BrowserType, on platform: UAPlatform) -> String? {
+        guard platform.supports(kind) else { return nil }
+        switch kind {
+        case .safari: return platform == .macOS ? safariMacOS : nil
+        case .chrome: return byPlatform(platform, iOS: chromeIOS, android: chromeAndroid, desktop: chrome)
+        case .firefox: return byPlatform(platform, iOS: firefoxIOS, android: firefox, desktop: firefox)
+        case .edge: return byPlatform(platform, iOS: edgeIOS, android: edgeAndroid, desktop: edge)
+        case .opera: return byPlatform(platform, iOS: operaIOS, android: operaAndroid, desktop: opera)
+        }
+    }
+
+    private static func byPlatform(_ platform: UAPlatform, iOS: String, android: String, desktop: String) -> String {
+        switch platform {
+        case .iOS: iOS
+        case .android: android
+        case .macOS, .windows, .linux: desktop
+        }
     }
 }

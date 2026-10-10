@@ -16,21 +16,12 @@ let package = Package(
             targets: ["APUserAgentGenerator"]
         )
     ],
-    dependencies: [
-        .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.8.0")
-    ],
     targets: [
+        // No dependencies: the browser side is pure string work, and the app
+        // side reads Bundle / ProcessInfo / uname, all of which are available
+        // on every Apple platform and on Linux.
         .target(
             name: "APUserAgentGenerator",
-            dependencies: [
-                // DeviceKit does not support macOS, and only the app-side
-                // builder needs it. The browser builders are pure string work.
-                .product(
-                    name: "DeviceKit",
-                    package: "DeviceKit",
-                    condition: .when(platforms: [.iOS, .tvOS, .watchOS, .visionOS])
-                )
-            ],
             resources: [
                 .process("PrivacyInfo.xcprivacy")
             ]

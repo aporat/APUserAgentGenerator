@@ -1,0 +1,26 @@
+name: Version freshness
+
+# Fails when a default in Sources/UAVersions.swift falls two or more majors
+# behind the vendor's stable release (one for iOS), and annotates a warning
+# when it is one major behind. GitHub notifies on failed scheduled runs.
+on:
+  schedule:
+    - cron: "17 9 * * 1"   # Mondays 09:17 UTC
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - Sources/UAVersions.swift
+      - scripts/check-versions.py
+      - .github/workflows/freshness.yml
+
+jobs:
+  freshness:
+    name: Version freshness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Check UAVersions against vendor release feeds
+        run: python3 scripts/check-versions.py

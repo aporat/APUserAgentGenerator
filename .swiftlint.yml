@@ -1,3 +1,8 @@
+included:
+  - Sources
+  - Tests
+  - Package.swift
+
 disabled_rules:
   - file_length
   - line_length
@@ -6,7 +11,6 @@ disabled_rules:
   - identifier_name
 
 opt_in_rules:
-  - anyobject_protocol
   - array_init
   - attributes
   - closure_end_indentation
@@ -21,7 +25,6 @@ opt_in_rules:
   - first_where
   - force_unwrapping
   - function_default_parameter_at_end
-  - inert_defer
   - no_extension_access_modifier
   - overridden_super_call
   - prohibited_super_call
@@ -57,10 +60,6 @@ opt_in_rules:
 
 analyzer_rules:
   - unused_import
-  - unused_private_declaration
+  - unused_declaration
 
 reporter: "xcode"
-
-identifier_name:
-  excluded:
-    - tv
