@@ -1,168 +1,110 @@
 import Foundation
-#if canImport(DeviceKit)
-import DeviceKit
-#endif
 
-// MARK: - Protocols
+// MARK: - Protocol
 
+/// A device to impersonate.
+///
+/// Formatting switches exhaustively over ``platform``; the other two members
+/// carry the only per-device data any browser actually reports.
 public protocol UADevice: Sendable {
+    /// The operating system this device runs.
+    var platform: UAPlatform { get }
+
+    /// The OS version reported where browsers still report one (iOS, and
+    /// Android when a model is named). `nil` for platforms whose token is frozen.
     var osVersion: String? { get }
-    var deviceModel: String { get }
 
-    func userAgentSystemInfo(for browser: UABrowser) -> String
+    /// A hardware model reported in the platform token. Only Android uses it.
+    var model: String? { get }
 }
 
-// MARK: - Concrete Devices
+extension UADevice {
+    public var osVersion: String? { nil }
+    public var model: String? { nil }
+}
 
-public struct MacDevice: UADevice {
-    /// An explicit macOS version override.
-    ///
-    /// Leave this `nil` for realistic output: no shipping browser reports the
-    /// real macOS version. Safari, Chrome and Edge have all pinned it to
-    /// 10.15.7 since Safari 15 / Chrome 90, and Firefox reports `10.15`.
+// MARK: - Concrete devices
+
+/// An iPhone.
+///
+/// `IOSDevice()` is deterministic: it reports ``UAVersions/iOS`` everywhere,
+/// including on a real iPhone, so the same code yields the same string in
+/// tests, on a server and on device. Use ``current`` to report the running
+/// device's iOS version instead.
+public struct IOSDevice: UADevice, Hashable {
+    public var platform: UAPlatform { .iOS }
+
+    /// The iOS version, e.g. `"27.0.1"`. Validated when the User-Agent is built.
     public var osVersion: String?
-    public var deviceModel: String = "Macintosh"
 
-    public init(osVersion: String? = nil) {
+    public init(osVersion: String = UAVersions.iOS) {
         self.osVersion = osVersion
     }
 
-    public func userAgentSystemInfo(for browser: UABrowser) -> String {
-        switch browser.browserType {
-        case .firefox:
-            let version = osVersion?.dottedVersion(limit: 2) ?? UAVersions.Frozen.macOSVersionDotted
-            return "Macintosh; Intel Mac OS X \(version); rv:\(browser.version(for: self))"
-        default:
-            let version = osVersion?.underscoredVersion() ?? UAVersions.Frozen.macOSVersion
-            return "Macintosh; Intel Mac OS X \(version)"
-        }
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    /// The iPhone this code is running on, with its real iOS version.
+    ///
+    /// Reads `ProcessInfo`, so it is safe to call from any isolation domain.
+    public static var current: IOSDevice {
+        IOSDevice(osVersion: ProcessInfo.processInfo.operatingSystemVersion.marketingVersion)
     }
+    #endif
 }
 
-public struct IOSDevice: UADevice {
-    public var osVersion: String?
-    public var deviceModel: String = "iPhone"
+/// A Mac. Every browser reports a frozen macOS version (`10_15_7` / `10.15`),
+/// so there is nothing to configure.
+public struct MacDevice: UADevice, Hashable {
+    public var platform: UAPlatform { .macOS }
 
-    public init(osVersion: String? = nil) {
-        if let osVersion {
-            self.osVersion = osVersion
-        } else {
-#if os(iOS) && canImport(DeviceKit)
-            self.osVersion = Device.current.systemVersion
-#else
-            self.osVersion = UAVersions.iOS
-#endif
-        }
-    }
-
-    public func userAgentSystemInfo(for browser: UABrowser) -> String {
-        "iPhone; CPU iPhone OS \(reportedOSVersion(for: browser)) like Mac OS X"
-    }
-
-    /// Resolves Apple's OS-version freeze.
-    ///
-    /// Starting with iOS 26 / Safari 26, WebKit reports a pinned OS token
-    /// instead of the real version. That covers every browser rendering with
-    /// the system WebKit — Safari, Edge, Firefox and Opera on iOS — but not
-    /// Chrome, which assembles its own User-Agent.
-    private func reportedOSVersion(for browser: UABrowser) -> String {
-        guard browser.usesSystemWebKitUserAgent else {
-            return actualOSVersion
-        }
-
-        // A Safari version override drives the freeze decision; other browsers
-        // inherit whatever Safari the system ships.
-        let safariMajor = (browser as? SafariBrowser)
-            .flatMap { Int($0.version(for: self).leadingDigits) }
-            ?? UAVersions.safariMajor
-
-        guard safariMajor >= UAVersions.Frozen.iOSFreezeIntroducedInSafari else {
-            return actualOSVersion
-        }
-        return UAVersions.Frozen.iOSVersion
-    }
-
-    private var actualOSVersion: String {
-        (osVersion ?? UAVersions.iOS).underscoredVersion(limit: 2)
-    }
+    public init() {}
 }
 
-public struct AndroidDevice: UADevice {
+/// An Android phone.
+///
+/// Without a ``model`` the device reports Chromium's reduced platform token
+/// (`Linux; Android 10; K`), which is what Chrome, Edge and Opera have sent
+/// since Chrome 110 — and ``osVersion`` is ignored, because the real version
+/// is never sent. Naming a model opts into the full
+/// `Linux; Android <osVersion>; <model>` token (WebView-style).
+///
+/// Firefox ignores both: it always reports `Android 10; Mobile`.
+public struct AndroidDevice: UADevice, Hashable {
+    public var platform: UAPlatform { .android }
+
+    /// The hardware model, e.g. `"Pixel 10 Pro"`. `nil` for the reduced token.
+    public var model: String?
+
+    /// The Android version reported alongside ``model``. Defaults to
+    /// ``UAVersions/android``.
     public var osVersion: String?
-    public var deviceModel: String
 
-    /// Whether to emit Chromium's reduced platform token (`Android 10; K`)
-    /// instead of the real Android version and device model.
-    ///
-    /// Chrome has sent the reduced token since Chrome 110, and Edge and Opera
-    /// followed, so it is what real Chromium traffic looks like. It defaults to
-    /// `true` unless you supply a `deviceModel`, on the assumption that naming a
-    /// model means you want it in the output.
-    ///
-    /// Firefox ignores this flag: it freezes the Android version to 10
-    /// unconditionally and never reports a model.
-    public var usesReducedPlatformToken: Bool
-
-    public init(
-        deviceModel: String? = nil,
-        osVersion: String? = nil,
-        usesReducedPlatformToken: Bool? = nil
-    ) {
-        self.deviceModel = deviceModel ?? UAVersions.Frozen.androidModel
-        self.osVersion = osVersion
-        self.usesReducedPlatformToken = usesReducedPlatformToken ?? (deviceModel == nil)
-    }
-
-    public func userAgentSystemInfo(for browser: UABrowser) -> String {
-        switch browser.browserType {
-        case .firefox:
-            // Firefox for Android has pinned the OS token to 10 since Firefox 122.
-            return "Android \(UAVersions.Frozen.androidVersion); Mobile; rv:\(browser.version(for: self))"
-        default:
-            guard usesReducedPlatformToken else {
-                return "Linux; Android \(osVersion ?? UAVersions.android); \(deviceModel)"
-            }
-            return "Linux; Android \(UAVersions.Frozen.androidVersion); \(UAVersions.Frozen.androidModel)"
-        }
-    }
-}
-
-public struct WindowsDevice: UADevice {
-    public var osVersion: String?
-    public var deviceModel: String = "WindowsPC"
-
-    public init(osVersion: String? = nil) {
+    public init(model: String? = nil, osVersion: String? = nil) {
+        self.model = model
         self.osVersion = osVersion
     }
-
-    public func userAgentSystemInfo(for browser: UABrowser) -> String {
-        // Windows NT 10.0 remains the standard for compatibility, even for Windows 11/12.
-        let version = osVersion ?? UAVersions.windowsNT
-        switch browser.browserType {
-        case .firefox:
-            return "Windows NT \(version); Win64; x64; rv:\(browser.version(for: self))"
-        default:
-            return "Windows NT \(version); Win64; x64"
-        }
-    }
 }
 
-public struct LinuxDevice: UADevice {
-    /// Unused. Linux User-Agent strings carry no OS version; the property exists
-    /// only to satisfy ``UADevice``.
-    public var osVersion: String?
-    public var deviceModel: String = "Linux"
+/// A Windows PC. Every browser reports `Windows NT 10.0; Win64; x64`.
+public struct WindowsDevice: UADevice, Hashable {
+    public var platform: UAPlatform { .windows }
 
-    public init(osVersion: String? = nil) {
-        self.osVersion = osVersion
-    }
+    public init() {}
+}
 
-    public func userAgentSystemInfo(for browser: UABrowser) -> String {
-        switch browser.browserType {
-        case .firefox:
-            return "X11; Linux x86_64; rv:\(browser.version(for: self))"
-        default:
-            return "X11; Linux x86_64"
-        }
+/// A desktop Linux machine. Every browser reports `X11; Linux x86_64`.
+public struct LinuxDevice: UADevice, Hashable {
+    public var platform: UAPlatform { .linux }
+
+    public init() {}
+}
+
+// MARK: - Helpers
+
+extension OperatingSystemVersion {
+    /// `"27.0"` / `"27.0.1"` — the same shape as `UIDevice.systemVersion`.
+    var marketingVersion: String {
+        patchVersion > 0
+            ? "\(majorVersion).\(minorVersion).\(patchVersion)"
+            : "\(majorVersion).\(minorVersion)"
     }
 }

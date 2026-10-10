@@ -1,49 +1,116 @@
 import Foundation
 
-extension String {
-    /// `"18.7.8"` → `"18_7_8"`, keeping at most `limit` components.
-    func underscoredVersion(limit: Int = 3) -> String {
-        joinedVersion(separator: "_", limit: limit)
+// MARK: - Versions
+
+/// A validated, purely numeric version such as `27.0.1` or `156.0.8078.12`.
+struct NumericVersion: Equatable, Sendable {
+    let components: [Int]
+
+    /// Parses one to four dot-separated runs of ASCII digits. Anything else —
+    /// suffixes like `-beta`, whitespace, empty components, CR/LF — is rejected.
+    init?(_ string: String, maxComponents: Int = 4) {
+        let parts = string.split(separator: ".", omittingEmptySubsequences: false)
+        guard (1...maxComponents).contains(parts.count) else { return nil }
+
+        var components: [Int] = []
+        for part in parts {
+            guard !part.isEmpty,
+                  part.count <= 9,
+                  part.utf8.allSatisfy({ (UInt8(ascii: "0")...UInt8(ascii: "9")).contains($0) }),
+                  let value = Int(part)
+            else { return nil }
+            components.append(value)
+        }
+        self.components = components
     }
 
-    /// `"10.15.7"` → `"10.15"`, keeping at most `limit` components.
-    func dottedVersion(limit: Int = 3) -> String {
-        joinedVersion(separator: ".", limit: limit)
+    var major: Int { components[0] }
+    var minor: Int { components.count > 1 ? components[1] : 0 }
+
+    /// Joins the components with `separator`, padding with zeros up to
+    /// `minimum` and truncating to `maximum`.
+    func formatted(separator: String = ".", minimum: Int = 1, maximum: Int = 4) -> String {
+        var padded = Array(components.prefix(maximum))
+        while padded.count < minimum {
+            padded.append(0)
+        }
+        return padded.map(String.init).joined(separator: separator)
     }
 
-    private func joinedVersion(separator: String, limit: Int) -> String {
-        split(separator: ".").prefix(limit).joined(separator: separator)
+    /// `"<major>.0.0.0"`, the shape Chromium's UA reduction gives every token.
+    var reduced: String { "\(major).0.0.0" }
+
+    /// `"<major>.0"`.
+    var majorDotZero: String { "\(major).0" }
+
+    /// `"<major>.<minor>"`.
+    var majorMinor: String { "\(major).\(minor)" }
+}
+
+// MARK: - Escaping (app User-Agents)
+
+enum UserAgentEscaping {
+    /// RFC 9110 `tchar`, minus `%` (which we use as the escape character).
+    private static let tokenCharacters: Set<UInt8> = {
+        var set = Set<UInt8>()
+        set.formUnion(UInt8(ascii: "0")...UInt8(ascii: "9"))
+        set.formUnion(UInt8(ascii: "a")...UInt8(ascii: "z"))
+        set.formUnion(UInt8(ascii: "A")...UInt8(ascii: "Z"))
+        for character in "!#$&'*+-.^_`|~".utf8 {
+            set.insert(character)
+        }
+        return set
+    }()
+
+    /// RFC 9110 `ctext` (printable ASCII and space, minus `(`, `)` and `\`),
+    /// minus `;` (our part separator) and `%` (the escape character).
+    private static let commentCharacters: Set<UInt8> = {
+        var set = Set<UInt8>(0x20...0x7E)
+        for character in "()\\;%".utf8 {
+            set.remove(character)
+        }
+        return set
+    }()
+
+    /// Percent-encodes everything that is not a token character, the way
+    /// CFNetwork encodes a bundle name in its default User-Agent
+    /// (`My App` → `My%20App`).
+    static func token(_ value: String) -> String {
+        percentEncode(trimmed(value), allowed: tokenCharacters)
     }
 
-    /// The leading run of digits, e.g. `"27"` for both `"27.0"` and `"27-beta"`.
-    /// Empty when the string does not start with a digit.
-    var leadingDigits: String {
-        String(prefix(while: \.isNumber))
+    /// Percent-encodes everything that could escape or corrupt a comment:
+    /// parentheses, backslash, `;`, `%`, control and non-ASCII characters.
+    static func comment(_ value: String) -> String {
+        percentEncode(trimmed(value), allowed: commentCharacters)
     }
 
-    /// The first `.`-separated component, when it starts with a digit.
-    var majorVersionComponent: String? {
-        let major = split(separator: ".").first.map(String.init)?.leadingDigits
-        return (major?.isEmpty == false) ? major : nil
+    private static func trimmed(_ value: String) -> String {
+        value.trimmingCharacters(in: .whitespacesAndNewlines.union(.controlCharacters))
     }
 
-    /// Strips the characters that would corrupt a User-Agent header.
-    ///
-    /// Control characters — CR and LF above all — are removed outright, since
-    /// leaving them in an app-supplied token would allow header injection.
-    /// Parentheses are removed and `;` becomes `,` so a token cannot escape the
-    /// comment section it is placed in.
-    func sanitizedUserAgentToken() -> String {
-        let cleaned = unicodeScalars
-            .filter { !CharacterSet.controlCharacters.contains($0) }
-            .map(Character.init)
-            .reduce(into: "") { partialResult, character in
-                switch character {
-                case ";": partialResult.append(",")
-                case "(", ")": break
-                default: partialResult.append(character)
-                }
+    private static func percentEncode(_ value: String, allowed: Set<UInt8>) -> String {
+        var result = ""
+        for byte in value.utf8 {
+            if allowed.contains(byte) {
+                result.append(Character(UnicodeScalar(byte)))
+            } else {
+                result += String(format: "%%%02X", byte)
             }
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return result
+    }
+}
+
+// MARK: - Validation (browser User-Agents)
+
+enum UserAgentValidation {
+    /// A device model may contain printable ASCII except the characters that
+    /// would break out of the `( … )` comment or the `;`-separated list.
+    static func isValidDeviceModel(_ model: String) -> Bool {
+        guard !model.isEmpty, model == model.trimmingCharacters(in: .whitespaces) else { return false }
+        return model.utf8.allSatisfy { byte in
+            (0x20...0x7E).contains(byte) && !"();\\".utf8.contains(byte)
+        }
     }
 }

@@ -6,7 +6,8 @@ updates:
       schedule:
           interval: "daily"
 
-    # Maintain dependencies for Composer
+    # Maintain Swift Package Manager dependencies (none today; kept so any
+    # future dependency is tracked automatically)
     - package-ecosystem: "swift"
       directory: "/"
       schedule:
