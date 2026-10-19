@@ -50,7 +50,7 @@ import APUserAgentGenerator
 
 let ua = try BrowserUserAgent(device: IOSDevice(), browser: SafariBrowser())
 print(ua.value)
-// Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1
+// Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.1 Mobile/15E148 Safari/604.1
 
 // The same thing, never throws:
 BrowserUserAgent.default.value
@@ -69,7 +69,7 @@ let chrome = try BrowserUserAgent.builder()
 
 | Device | Browser | User-Agent |
 |---|---|---|
-| `IOSDevice()` | Safari | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1` |
+| `IOSDevice()` | Safari | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.1 Mobile/15E148 Safari/604.1` |
 | `IOSDevice()` | Chrome | `Mozilla/5.0 (iPhone; CPU iPhone OS 27_1_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/156.0.8078.33 Mobile/15E148 Safari/604.1` |
 | `IOSDevice()` | Firefox | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/158.1 Mobile/15E148 Safari/605.1.15` |
 | `IOSDevice()` | Edge | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 EdgiOS/155.4283.48 Mobile/15E148 Safari/605.1.15` |

@@ -53,11 +53,11 @@ struct CombinationTests {
 
     @Test("Defaults: Safari on IOSDevice() at UAVersions.iOS, frozen")
     func defaults() throws {
-        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1"
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.1 Mobile/15E148 Safari/604.1"
         #expect(try BrowserUserAgent().value == expected)
         #expect(BrowserUserAgent.default.value == expected)
         #expect(try BrowserUserAgent.builder().build().value == expected)
-        #expect(BrowserUserAgent.default.browserVersion == "27.0")
+        #expect(BrowserUserAgent.default.browserVersion == "27.1")
         #expect(IOSDevice().osVersion == UAVersions.iOS)
     }
 
