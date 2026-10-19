@@ -53,11 +53,11 @@ struct CombinationTests {
 
     @Test("Defaults: Safari on IOSDevice() at UAVersions.iOS, frozen")
     func defaults() throws {
-        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1"
+        let expected = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.1 Mobile/15E148 Safari/604.1"
         #expect(try BrowserUserAgent().value == expected)
         #expect(BrowserUserAgent.default.value == expected)
         #expect(try BrowserUserAgent.builder().build().value == expected)
-        #expect(BrowserUserAgent.default.browserVersion == "27.0")
+        #expect(BrowserUserAgent.default.browserVersion == "27.1")
         #expect(IOSDevice().osVersion == UAVersions.iOS)
     }
 
@@ -77,14 +77,14 @@ struct CombinationTests {
         }
         #expect(try ua(WindowsDevice(), ChromeBrowser()).contains("Chrome/156.0.0.0 Safari/537.36"))
         #expect(try ua(AndroidDevice(), ChromeBrowser()).contains("Chrome/156.0.0.0 Mobile Safari/537.36"))
-        #expect(try ua(IOSDevice(), ChromeBrowser()).contains("iPhone OS 27_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/155.0.8059.37 "))
-        #expect(try ua(MacDevice(), FirefoxBrowser()).hasSuffix("rv:157.0) Gecko/20100101 Firefox/157.0"))
-        #expect(try ua(IOSDevice(), FirefoxBrowser()).contains("FxiOS/157.1 Mobile/15E148 Safari/605.1.15"))
+        #expect(try ua(IOSDevice(), ChromeBrowser()).contains("iPhone OS 27_1_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/156.0.8078.33 "))
+        #expect(try ua(MacDevice(), FirefoxBrowser()).hasSuffix("rv:158.0) Gecko/20100101 Firefox/158.0"))
+        #expect(try ua(IOSDevice(), FirefoxBrowser()).contains("FxiOS/158.1 Mobile/15E148 Safari/605.1.15"))
         #expect(try ua(WindowsDevice(), EdgeBrowser()).hasSuffix("Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0"))
-        #expect(try ua(AndroidDevice(), EdgeBrowser()).hasSuffix("Chrome/154.0.0.0 Mobile Safari/537.36 EdgA/154.0.0.0"))
-        #expect(try ua(IOSDevice(), EdgeBrowser()).contains("Version/27.0 EdgiOS/153.4234.46 Mobile/15E148 Safari/605.1.15"))
+        #expect(try ua(AndroidDevice(), EdgeBrowser()).hasSuffix("Chrome/155.0.0.0 Mobile Safari/537.36 EdgA/155.0.0.0"))
+        #expect(try ua(IOSDevice(), EdgeBrowser()).contains("Version/27.0 EdgiOS/155.4283.48 Mobile/15E148 Safari/605.1.15"))
         #expect(try ua(LinuxDevice(), OperaBrowser()).hasSuffix("Chrome/153.0.0.0 Safari/537.36 OPR/137.0.0.0"))
-        #expect(try ua(AndroidDevice(), OperaBrowser()).hasSuffix("Chrome/150.0.0.0 Mobile Safari/537.36 OPR/102.3.5206.90530"))
+        #expect(try ua(AndroidDevice(), OperaBrowser()).hasSuffix("Chrome/150.0.0.0 Mobile Safari/537.36 OPR/102.4.5206.90738"))
         #expect(try ua(IOSDevice(), OperaBrowser()).hasSuffix("Version/27.0 Mobile/15E148 Safari/604.1 OPT/6.7.3"))
         #expect(try ua(MacDevice(), SafariBrowser()).contains("Version/27.0 Safari/605.1.15"))
     }

@@ -16,7 +16,7 @@
 - **No dependencies, no UIKit, no main actor** — pure Swift + Foundation; builds on every Apple platform and on Linux, and works from any isolation domain.
 - **Deterministic by default** — `IOSDevice()` always reports the package's current iOS version; opt into the running device with `IOSDevice.current`.
 
-Every default version lives in [`Sources/UAVersions.swift`](Sources/UAVersions.swift), last verified **2026-10-10** against vendor release feeds (Safari 27, Chrome 156 / iOS 155, Firefox 157, Edge 155, Opera 137, iOS 27.0.1). A scheduled [*Version freshness*](.github/workflows/freshness.yml) workflow re-checks them weekly.
+Every default version lives in [`Sources/UAVersions.swift`](Sources/UAVersions.swift), last verified **2026-10-19** against vendor release feeds (Safari 27, Chrome 156, Firefox 158, Edge 155, Opera 137, iOS 27.1). A scheduled [*Version freshness*](.github/workflows/freshness.yml) workflow re-checks them weekly.
 
 ## Requirements
 
@@ -50,7 +50,7 @@ import APUserAgentGenerator
 
 let ua = try BrowserUserAgent(device: IOSDevice(), browser: SafariBrowser())
 print(ua.value)
-// Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1
+// Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.1 Mobile/15E148 Safari/604.1
 
 // The same thing, never throws:
 BrowserUserAgent.default.value
@@ -69,19 +69,19 @@ let chrome = try BrowserUserAgent.builder()
 
 | Device | Browser | User-Agent |
 |---|---|---|
-| `IOSDevice()` | Safari | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1` |
-| `IOSDevice()` | Chrome | `Mozilla/5.0 (iPhone; CPU iPhone OS 27_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/155.0.8059.37 Mobile/15E148 Safari/604.1` |
-| `IOSDevice()` | Firefox | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/157.1 Mobile/15E148 Safari/605.1.15` |
-| `IOSDevice()` | Edge | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 EdgiOS/153.4234.46 Mobile/15E148 Safari/605.1.15` |
+| `IOSDevice()` | Safari | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.1 Mobile/15E148 Safari/604.1` |
+| `IOSDevice()` | Chrome | `Mozilla/5.0 (iPhone; CPU iPhone OS 27_1_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/156.0.8078.33 Mobile/15E148 Safari/604.1` |
+| `IOSDevice()` | Firefox | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/158.1 Mobile/15E148 Safari/605.1.15` |
+| `IOSDevice()` | Edge | `Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 EdgiOS/155.4283.48 Mobile/15E148 Safari/605.1.15` |
 | `IOSDevice(osVersion: "17.4.1")` | Safari | `Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1` |
 | `MacDevice()` | Safari | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15` |
-| `MacDevice()` | Firefox | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:157.0) Gecko/20100101 Firefox/157.0` |
+| `MacDevice()` | Firefox | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:158.0) Gecko/20100101 Firefox/158.0` |
 | `MacDevice()` | Opera | `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 OPR/137.0.0.0` |
 | `AndroidDevice()` | Chrome | `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36` |
-| `AndroidDevice()` | Edge | `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36 EdgA/154.0.0.0` |
-| `AndroidDevice()` | Firefox | `Mozilla/5.0 (Android 10; Mobile; rv:157.0) Gecko/157.0 Firefox/157.0` |
+| `AndroidDevice()` | Edge | `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36 EdgA/155.0.0.0` |
+| `AndroidDevice()` | Firefox | `Mozilla/5.0 (Android 10; Mobile; rv:158.0) Gecko/158.0 Firefox/158.0` |
 | `WindowsDevice()` | Edge | `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0` |
-| `LinuxDevice()` | Firefox | `Mozilla/5.0 (X11; Linux x86_64; rv:157.0) Gecko/20100101 Firefox/157.0` |
+| `LinuxDevice()` | Firefox | `Mozilla/5.0 (X11; Linux x86_64; rv:158.0) Gecko/20100101 Firefox/158.0` |
 
 ### Devices
 
@@ -112,7 +112,7 @@ Firefox for Android ignores both and always reports `Android 10; Mobile`.
 
 ### Browsers
 
-`SafariBrowser`, `ChromeBrowser`, `FirefoxBrowser`, `EdgeBrowser` and `OperaBrowser` each take an optional `version:` override, given **unreduced** (`"156.0.8078.12"`). The formatter reduces it exactly as the real browser would: `Chrome/156.0.0.0`, `Edg/155.0.0.0`, `Firefox/157.0`; `CriOS/`, `EdgiOS/`, `FxiOS/`, Android `OPR/` and `OPT/` are sent verbatim. Embedded `Chrome/` tokens follow the override: Edge's always equals its own major, and Opera's is derived from the Opera major (or set explicitly with `OperaBrowser(version:chromiumVersion:)`).
+`SafariBrowser`, `ChromeBrowser`, `FirefoxBrowser`, `EdgeBrowser` and `OperaBrowser` each take an optional `version:` override, given **unreduced** (`"156.0.8078.12"`). The formatter reduces it exactly as the real browser would: `Chrome/156.0.0.0`, `Edg/155.0.0.0`, `Firefox/158.0`; `CriOS/`, `EdgiOS/`, `FxiOS/`, Android `OPR/` and `OPT/` are sent verbatim. Embedded `Chrome/` tokens follow the override: Edge's always equals its own major, and Opera's is derived from the Opera major (or set explicitly with `OperaBrowser(version:chromiumVersion:)`).
 
 `BrowserType.allCases` / `BrowserType.browser`, `UAPlatform.allCases` / `supportedBrowsers` and `UAVersions.defaultVersion(for:on:)` let you iterate over everything that is supported:
 
