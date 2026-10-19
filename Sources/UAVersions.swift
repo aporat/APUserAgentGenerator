@@ -4,9 +4,9 @@ import Foundation
 ///
 /// Versions are stored **unreduced**, exactly as the vendor publishes them, so
 /// they can be compared against release feeds. The formatter reduces them to
-/// what each browser actually sends (`Chrome/156.0.0.0`, `Firefox/157.0`, …).
+/// what each browser actually sends (`Chrome/156.0.0.0`, `Firefox/158.0`, …).
 ///
-/// Last verified on **2026-10-10** (see ``lastVerified``) against:
+/// Last verified on **2026-10-19** (see ``lastVerified``) against:
 /// * Chrome — `versionhistory.googleapis.com` (stable channel, per platform)
 /// * Firefox — `product-details.mozilla.org`; Firefox for iOS — App Store lookup
 /// * Edge — `edgeupdates.microsoft.com/api/products` (stable, per platform)
@@ -19,7 +19,7 @@ import Foundation
 public enum UAVersions {
 
     /// The date the constants below were last checked against vendor feeds.
-    public static let lastVerified = "2026-10-10"
+    public static let lastVerified = "2026-10-19"
 
     // MARK: - Browsers
 
@@ -28,35 +28,35 @@ public enum UAVersions {
     public static let safariMacOS = "27.0"
 
     /// Chrome stable on desktop (Windows/macOS). Sent reduced: `Chrome/156.0.0.0`.
-    public static let chrome = "156.0.8078.12"
+    public static let chrome = "156.0.8078.36"
     /// Chrome stable on Android. Also sent reduced since Chrome 110.
-    public static let chromeAndroid = "156.0.8078.25"
+    public static let chromeAndroid = "156.0.8078.39"
     /// Chrome stable on iOS. `CriOS/` is the one Chrome token that keeps the
     /// full four-part version. iOS ships on its own train.
-    public static let chromeIOS = "155.0.8059.37"
+    public static let chromeIOS = "156.0.8078.33"
 
     /// Firefox stable (desktop and Android share a version). Sent as
-    /// `Firefox/157.0` — Gecko only ever reports `<major>.0`.
-    public static let firefox = "157.0.1"
+    /// `Firefox/158.0` — Gecko only ever reports `<major>.0`.
+    public static let firefox = "158.0"
     /// Firefox for iOS, sent verbatim in `FxiOS/`.
-    public static let firefoxIOS = "157.1"
+    public static let firefoxIOS = "158.1"
 
     /// Edge stable on desktop. Sent reduced: `Edg/155.0.0.0`.
-    public static let edge = "155.0.4283.45"
-    /// Edge stable on Android. Sent reduced: `EdgA/154.0.0.0`.
-    public static let edgeAndroid = "154.0.4258.38"
+    public static let edge = "155.0.4283.62"
+    /// Edge stable on Android. Sent reduced: `EdgA/155.0.0.0`.
+    public static let edgeAndroid = "155.0.4283.61"
     /// Edge for iOS, sent verbatim in `EdgiOS/`. Edge for iOS drops the
-    /// always-zero minor component (`153.0.4234.46` → `153.4234.46`).
-    public static let edgeIOS = "153.4234.46"
+    /// always-zero minor component (`155.0.4283.48` → `155.4283.48`).
+    public static let edgeIOS = "155.4283.48"
 
     /// Opera stable on desktop. Sent reduced: `OPR/137.0.0.0`.
-    public static let opera = "137.0.6036.39"
+    public static let opera = "137.0.6036.63"
     /// Opera desktop major N is built on Chromium N + 16 (Opera 137 →
     /// Chromium 153, per the Opera 137 changelog). Used to derive the embedded
     /// `Chrome/` token when only the Opera version is overridden.
     public static let operaChromiumOffset = 16
     /// Opera for Android, sent verbatim in `OPR/`.
-    public static let operaAndroid = "102.3.5206.90530"
+    public static let operaAndroid = "102.4.5206.90738"
     /// Opera for Android major N is built on roughly Chromium N + 48. Opera does
     /// not publish this mapping, so treat it as an estimate.
     public static let operaAndroidChromiumOffset = 48
@@ -66,7 +66,7 @@ public enum UAVersions {
     // MARK: - Operating systems
 
     /// The current iOS release. ``IOSDevice/init(osVersion:)`` defaults to it.
-    public static let iOS = "27.0.1"
+    public static let iOS = "27.1"
     /// The current Android release, used only when an ``AndroidDevice`` names a
     /// model (otherwise the frozen token is sent).
     public static let android = "17"
