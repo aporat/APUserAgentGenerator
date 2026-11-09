@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project follows [Se
 
 ### Changed
 
+- Bumped every default in `UAVersions` to the stable releases verified on 2026-11-09: Chrome 158.0.8127.18 / Android 158.0.8127.22 / iOS 157.0.8103.37, Firefox 159.0.1 / iOS 160.0, Edge 157.0.4341.42 / Android 157.0.4341.42 / iOS 157.4341.42, Opera 139.0.6053.38 / Android 103.3.5234.91185 / iOS 6.8.2, iOS 27.2.1. Seven defaults had fallen two majors behind, which failed the *Version freshness* workflow.
 - Bumped every default in `UAVersions` to the stable releases verified on 2026-10-19: Chrome 156.0.8078.36 / Android 156.0.8078.39 / iOS 156.0.8078.33, Firefox 158.0 / iOS 158.1, Edge 155.0.4283.62 / Android 155.0.4283.61 / iOS 155.4283.48, Opera 137.0.6036.63 / Android 102.4.5206.90738, iOS 27.1. Edge for iOS had fallen two majors behind, which failed the *Version freshness* workflow.
 
 A breaking release that makes every generated string match what the real browser sends, validates all input, and removes the DeviceKit dependency. See **Migrating from 1.x** in the README.

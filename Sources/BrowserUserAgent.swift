@@ -6,7 +6,7 @@ import Foundation
 /// ```swift
 /// let ua = try BrowserUserAgent(device: AndroidDevice(), browser: ChromeBrowser())
 /// ua.value
-/// // Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36
+/// // Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 /// ```
 ///
 /// Building throws ``UserAgentError`` for combinations no real browser

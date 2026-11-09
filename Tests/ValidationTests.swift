@@ -75,7 +75,7 @@ struct ValidationTests {
     func nilIOSVersion() throws {
         var device = IOSDevice()
         device.osVersion = nil
-        #expect(try BrowserUserAgent(device: device, browser: ChromeBrowser()).value.contains("iPhone OS 27_1_0 like"))
+        #expect(try BrowserUserAgent(device: device, browser: ChromeBrowser()).value.contains("iPhone OS 27_2_1 like"))
     }
 
     @Test("Errors describe themselves")
